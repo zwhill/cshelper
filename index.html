@@ -105,6 +105,17 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .ma{background:#0d1f0d;color:#cfc;border:1px solid #1a3a1a}
 .ma a{color:#6df;font-size:11px;text-decoration:none}.ma a:hover{text-decoration:underline}
 .msys{background:#1a1a0d;color:#dd9;border:1px solid #2a2a15;font-size:12px;font-style:italic}
+.msg-wrap{display:flex;flex-direction:column;gap:4px}
+.feedback-row{display:flex;align-items:center;gap:6px;padding:2px 4px}
+.fb-btn{background:none;border:1px solid var(--border2);border-radius:4px;padding:3px 7px;cursor:pointer;font-size:13px;color:var(--text3);transition:all .15s;line-height:1}
+.fb-btn:hover{border-color:var(--border);color:#fff}
+.fb-btn.active-up{border-color:#2ecc71;color:#2ecc71;background:#0d2a0d}
+.fb-btn.active-down{border-color:#e74c3c;color:#e74c3c;background:#2a0d0d}
+.fb-note{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:4px;padding:4px 8px;color:var(--text);font-size:11px;outline:none;font-family:inherit}
+.fb-note:focus{border-color:var(--red)}
+.fb-send{background:var(--red);border:none;border-radius:4px;padding:4px 9px;color:#fff;font-size:11px;font-weight:600;cursor:pointer}
+.fb-send:hover{background:var(--red-dark)}
+.fb-done{font-size:11px;color:var(--text3);font-style:italic}
 #aiw{padding:10px;border-top:1px solid var(--border);display:flex;gap:7px}
 #aii{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--rsm);padding:7px 9px;color:var(--text);font-size:13px;resize:none;outline:none;height:56px;font-family:inherit}
 #aii:focus{border-color:var(--red)}
@@ -752,6 +763,7 @@ function localSearch(q){
   const ql=q.toLowerCase();
   const res=allDocs.filter(d=>d.name.toLowerCase().includes(ql)||(d.snippet||'').toLowerCase().includes(ql)).slice(0,8);
   const box=document.getElementById('sr');
+  logSearch(q, res.length);
   if(!res.length){box.style.display='none';return;}
   box.innerHTML=res.map(d=>`<div class="sri" onclick="openDoc('${escId(d.id)}');clearSearch()">
     <div class="st">${esc(d.name.replace(/\.pdf$/i,''))}</div>
@@ -804,7 +816,7 @@ async function ask(){
   const q=inp.value.trim();if(!q)return;
   inp.value='';document.getElementById('ais').disabled=true;
   addMsg('user',esc(q));
-  const loading=addMsg('ai','<em style="color:var(--text3)">Searching knowledgebase…</em>');
+  const loadingMsg=addMsg('ai','<em style="color:var(--text3)">Searching knowledgebase…</em>');
   const hits=allDocs.filter(d=>(d.name.toLowerCase().includes(q.toLowerCase())||(d.snippet||'').toLowerCase().includes(q.toLowerCase()))&&(!aiCtx||d.brand===aiCtx)).slice(0,6);
   const docCtx=hits.map(h=>`[${h.name?.replace(/\.pdf$/i,'')}]: ${h.snippet||''}`).join('\n');
   const sys=`You are an expert technical customer support assistant for Holley's automotive tuning brands: DiabloSport, Edge Products, Superchips, and Range Technology.${aiCtx?` Current brand context: ${aiCtx}.`:''}\n\nRelevant knowledgebase documents:\n${docCtx||'No specific matches — use general brand knowledge.'}\n\nAnswer directly and practically. Name specific documents when relevant. Step-by-step for procedures. Under 200 words unless a procedure requires more. You are helping a tech support professional — be precise.`;
@@ -814,10 +826,61 @@ async function ask(){
     const text=data.content?.find(b=>b.type==='text')?.text||'No response.';
     let html=text.replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
     if(hits.length)html+='<br><br><span style="font-size:11px;color:var(--text3)">Sources: '+hits.slice(0,3).map(h=>`<a href="${h.url}" target="_blank">${esc((h.name||'').replace(/\.pdf$/i,'').substring(0,35))}…</a>`).join(', ')+'</span>';
-    loading.innerHTML=html;
+    loadingMsg.innerHTML=html;
     logQuery(q,aiCtx,hits.length);
-  }catch(e){loading.innerHTML=`<span style="color:#f66">Error: ${esc(e.message)}</span>`;}
+    addFeedback(loadingMsg, q, aiCtx||'all', text);
+  }catch(e){loadingMsg.innerHTML=`<span style="color:#f66">Error: ${esc(e.message)}</span>`;}
   document.getElementById('ais').disabled=false;
+}
+
+function addFeedback(msgEl, question, brand, aiResponse){
+  const wrap=document.createElement('div');
+  wrap.className='feedback-row';
+  const fbId='fb_'+Date.now();
+  wrap.innerHTML=`
+    <span style="font-size:11px;color:var(--text3)">Helpful?</span>
+    <button class="fb-btn" id="${fbId}_up" onclick="submitFeedback('${fbId}','thumbs_up',${JSON.stringify(question).replace(/'/g,"\\'")},'${brand}',${JSON.stringify(aiResponse).replace(/'/g,"\\'")})" title="Helpful">👍</button>
+    <button class="fb-btn" id="${fbId}_down" onclick="showFbNote('${fbId}')" title="Not helpful">👎</button>
+    <span id="${fbId}_note" style="display:none;flex:1;display:none;gap:5px;align-items:center">
+      <input class="fb-note" id="${fbId}_txt" placeholder="What were you looking for? (optional)" />
+      <button class="fb-send" onclick="submitFeedback('${fbId}','thumbs_down',${JSON.stringify(question).replace(/'/g,"\\'")},'${brand}',${JSON.stringify(aiResponse).replace(/'/g,"\\'")},'${fbId}_txt')">Send</button>
+    </span>`;
+  msgEl.parentNode.insertBefore(wrap, msgEl.nextSibling);
+  // store refs for inline access
+  wrap._q=question; wrap._brand=brand; wrap._ai=aiResponse;
+}
+
+function showFbNote(fbId){
+  const noteEl=document.getElementById(fbId+'_note');
+  if(noteEl){noteEl.style.display='flex';}
+  document.getElementById(fbId+'_down')?.classList.add('active-down');
+}
+
+function submitFeedback(fbId, rating, question, brand, aiResponse, txtId){
+  const freeText=txtId?document.getElementById(txtId)?.value.trim():'';
+  const upBtn=document.getElementById(fbId+'_up');
+  const downBtn=document.getElementById(fbId+'_down');
+  if(rating==='thumbs_up'){upBtn?.classList.add('active-up');downBtn?.classList.remove('active-down');}
+  else{downBtn?.classList.add('active-down');upBtn?.classList.remove('active-up');}
+  // hide note row, show done
+  const noteEl=document.getElementById(fbId+'_note');
+  if(noteEl)noteEl.style.display='none';
+  const row=upBtn?.closest('.feedback-row');
+  if(row){
+    const done=document.createElement('span');
+    done.className='fb-done';
+    done.textContent=rating==='thumbs_up'?' Glad it helped!'>' Logged — thanks for the feedback';
+    row.appendChild(done);
+  }
+  paLog(PA_FEEDBACK_URL,{
+    timestamp: new Date().toISOString(),
+    question,
+    brandContext: brand,
+    aiResponse: aiResponse.substring(0,500),
+    rating,
+    freeText: freeText||'',
+    userAgent: navigator.userAgent
+  });
 }
 
 function addMsg(role,html){
@@ -915,16 +978,55 @@ function renderQueryLog(){
 }
 
 // ── ANALYTICS ──────────────────────────────────────────────
-function logQuery(q,brand,hits){
-  const entry={q,brand:brand||'all',hits,ts:new Date().toISOString()};
+// ── POWER AUTOMATE LOGGING ENDPOINTS ───────────────────────
+const PA_DOC_VIEW_URL  = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/80247b7e487a4e439f46f475bb90f0ce/triggers/manual/paths/invoke?api-version=1';
+const PA_SEARCH_URL    = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6c4f063274df450a9e47643bb7a252be/triggers/manual/paths/invoke?api-version=1';
+const PA_AI_QUERY_URL  = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d4623022a52d47058523f135931324b9/triggers/manual/paths/invoke?api-version=1';
+const PA_FEEDBACK_URL  = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6e710e13967645e8bd7c1b9345a136b1/triggers/manual/paths/invoke?api-version=1';
+
+function paLog(url, payload){
+  fetch(url, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  }).catch(e=>console.warn('[KB:log error]',e));
+}
+
+function logQuery(q, brand, hits){
+  const entry={q, brand:brand||'all', hits, ts:new Date().toISOString()};
   analytics.queries.push(entry);
   document.getElementById('s-queries').textContent=analytics.queries.length;
   console.log('[KB:query]',entry);
+  paLog(PA_AI_QUERY_URL, {
+    timestamp: entry.ts,
+    question: q,
+    brandContext: brand||'all',
+    userAgent: navigator.userAgent
+  });
 }
+
 function logDocView(doc){
-  const entry={name:doc.name,brand:doc.brand,ts:new Date().toISOString()};
+  const entry={name:doc.name, brand:doc.brand, ts:new Date().toISOString()};
   analytics.docViews.push(entry);
   console.log('[KB:view]',entry);
+  paLog(PA_DOC_VIEW_URL, {
+    timestamp: entry.ts,
+    docName: doc.name.replace(/\.pdf$/i,''),
+    brand: doc.brand,
+    docType: doc.type||'',
+    userAgent: navigator.userAgent
+  });
+}
+
+function logSearch(term, resultCount){
+  const ts = new Date().toISOString();
+  console.log('[KB:search]', {term, resultCount, ts});
+  paLog(PA_SEARCH_URL, {
+    timestamp: ts,
+    searchTerm: term,
+    resultCount: resultCount,
+    userAgent: navigator.userAgent
+  });
 }
 
 // ── BANNER ─────────────────────────────────────────────────
