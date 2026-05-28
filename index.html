@@ -105,7 +105,6 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .ma{background:#0d1f0d;color:#cfc;border:1px solid #1a3a1a}
 .ma a{color:#6df;font-size:11px;text-decoration:none}.ma a:hover{text-decoration:underline}
 .msys{background:#1a1a0d;color:#dd9;border:1px solid #2a2a15;font-size:12px;font-style:italic}
-.msg-wrap{display:flex;flex-direction:column;gap:4px}
 .feedback-row{display:flex;align-items:center;gap:6px;padding:2px 4px}
 .fb-btn{background:none;border:1px solid var(--border2);border-radius:4px;padding:3px 7px;cursor:pointer;font-size:13px;color:var(--text3);transition:all .15s;line-height:1}
 .fb-btn:hover{border-color:var(--border);color:#fff}
@@ -163,11 +162,11 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 /* MODAL */
 #modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center}
 #modal.open{display:flex}
-#mi{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);width:680px;max-width:95vw;max-height:88vh;display:flex;flex-direction:column}
+#mi{background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius);width:1100px;max-width:96vw;max-height:94vh;height:94vh;display:flex;flex-direction:column}
 #mhd{padding:15px 17px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 #mhd .mt h3{font-size:15px;font-weight:600;color:#fff;margin-bottom:3px}#mhd .mt p{font-size:12px;color:var(--text2)}
 #mhd button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:17px;padding:3px}#mhd button:hover{color:#fff}
-#mb{flex:1;overflow-y:auto;padding:17px}
+#mb{flex:1;overflow-y:auto;padding:17px;display:flex;flex-direction:column;min-height:0}
 #mft{padding:11px 17px;border-top:1px solid var(--border);display:flex;gap:9px}
 .btn{padding:6px 14px;border-radius:var(--rsm);font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:var(--surface2);color:var(--text);transition:all .15s}
 .btn:hover{background:var(--surface3);color:#fff}.btnp{background:var(--red);border-color:var(--red);color:#fff}.btnp:hover{background:var(--red-dark)}
@@ -782,9 +781,9 @@ function openDoc(id){
   document.getElementById('mtitle').textContent=activeDoc.name.replace(/\.pdf$/i,'');
   document.getElementById('mmeta').textContent=activeDoc.brand+' · PDF'+(activeDoc.modified?' · '+new Date(activeDoc.modified).toLocaleDateString():'');
   const embedHtml = activeDoc.embedUrl
-    ? `<div style="margin-bottom:12px;border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;background:#000;position:relative">
-        <iframe src="${activeDoc.embedUrl}" width="100%" height="520" frameborder="0" allowfullscreen
-          style="display:block"
+    ? `<div style="margin-bottom:12px;border:1px solid var(--border);border-radius:var(--rsm);overflow:hidden;background:#000;position:relative;flex:1;min-height:0">
+        <iframe src="${activeDoc.embedUrl}" width="100%" height="100%" frameborder="0" allowfullscreen
+          style="display:block;min-height:720px"
           onerror="this.parentElement.innerHTML='<div style=padding:20px;color:var(--text3);text-align:center>Preview unavailable — open in SharePoint instead.</div>'">
         </iframe>
        </div>`
@@ -804,6 +803,34 @@ function openDoc(id){
 }
 function closeModal(){document.getElementById('modal').classList.remove('open');}
 document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
+
+// ── POWER AUTOMATE LOGGING ─────────────────────────────────
+const PA_DOC_VIEW_URL = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/80247b7e487a4e439f46f475bb90f0ce/triggers/manual/paths/invoke?api-version=1';
+const PA_SEARCH_URL   = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6c4f063274df450a9e47643bb7a252be/triggers/manual/paths/invoke?api-version=1';
+const PA_AI_QUERY_URL = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d4623022a52d47058523f135931324b9/triggers/manual/paths/invoke?api-version=1';
+const PA_FEEDBACK_URL = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6e710e13967645e8bd7c1b9345a136b1/triggers/manual/paths/invoke?api-version=1';
+
+function paLog(url,payload){
+  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(e=>console.warn('[KB:log error]',e));
+}
+
+function logQuery(q,brand,hits){
+  const entry={q,brand:brand||'all',hits,ts:new Date().toISOString()};
+  analytics.queries.push(entry);
+  document.getElementById('s-queries').textContent=analytics.queries.length;
+  console.log('[KB:query]',entry);
+  paLog(PA_AI_QUERY_URL,{timestamp:entry.ts,question:q,brandContext:brand||'all',userAgent:navigator.userAgent});
+}
+function logDocView(doc){
+  const entry={name:doc.name,brand:doc.brand,ts:new Date().toISOString()};
+  analytics.docViews.push(entry);
+  console.log('[KB:view]',entry);
+  paLog(PA_DOC_VIEW_URL,{timestamp:entry.ts,docName:doc.name.replace(/\.pdf$/i,''),brand:doc.brand,docType:doc.type||'',userAgent:navigator.userAgent});
+}
+function logSearch(term,resultCount){
+  console.log('[KB:search]',{term,resultCount});
+  paLog(PA_SEARCH_URL,{timestamp:new Date().toISOString(),searchTerm:term,resultCount:resultCount,userAgent:navigator.userAgent});
+}
 
 // ── AI ─────────────────────────────────────────────────────
 function toggleAI(){aiOpen=!aiOpen;document.getElementById('aip').classList.toggle('closed',!aiOpen);}
@@ -828,59 +855,48 @@ async function ask(){
     if(hits.length)html+='<br><br><span style="font-size:11px;color:var(--text3)">Sources: '+hits.slice(0,3).map(h=>`<a href="${h.url}" target="_blank">${esc((h.name||'').replace(/\.pdf$/i,'').substring(0,35))}…</a>`).join(', ')+'</span>';
     loadingMsg.innerHTML=html;
     logQuery(q,aiCtx,hits.length);
-    addFeedback(loadingMsg, q, aiCtx||'all', text);
+    addFeedback(loadingMsg,q,aiCtx||'all',text);
   }catch(e){loadingMsg.innerHTML=`<span style="color:#f66">Error: ${esc(e.message)}</span>`;}
   document.getElementById('ais').disabled=false;
 }
 
-function addFeedback(msgEl, question, brand, aiResponse){
+function addFeedback(msgEl,question,brand,aiResponse){
+  const fbId='fb_'+Date.now();
   const wrap=document.createElement('div');
   wrap.className='feedback-row';
-  const fbId='fb_'+Date.now();
   wrap.innerHTML=`
     <span style="font-size:11px;color:var(--text3)">Helpful?</span>
-    <button class="fb-btn" id="${fbId}_up" onclick="submitFeedback('${fbId}','thumbs_up',${JSON.stringify(question).replace(/'/g,"\\'")},'${brand}',${JSON.stringify(aiResponse).replace(/'/g,"\\'")})" title="Helpful">👍</button>
+    <button class="fb-btn" id="${fbId}_up" onclick="submitFeedback('${fbId}','thumbs_up')" title="Helpful">👍</button>
     <button class="fb-btn" id="${fbId}_down" onclick="showFbNote('${fbId}')" title="Not helpful">👎</button>
-    <span id="${fbId}_note" style="display:none;flex:1;display:none;gap:5px;align-items:center">
+    <span id="${fbId}_note" style="display:none;flex:1;gap:5px;align-items:center">
       <input class="fb-note" id="${fbId}_txt" placeholder="What were you looking for? (optional)" />
-      <button class="fb-send" onclick="submitFeedback('${fbId}','thumbs_down',${JSON.stringify(question).replace(/'/g,"\\'")},'${brand}',${JSON.stringify(aiResponse).replace(/'/g,"\\'")},'${fbId}_txt')">Send</button>
+      <button class="fb-send" onclick="submitFeedback('${fbId}','thumbs_down','${fbId}_txt')">Send</button>
     </span>`;
-  msgEl.parentNode.insertBefore(wrap, msgEl.nextSibling);
-  // store refs for inline access
-  wrap._q=question; wrap._brand=brand; wrap._ai=aiResponse;
+  wrap._q=question;wrap._brand=brand;wrap._ai=aiResponse;
+  msgEl.parentNode.insertBefore(wrap,msgEl.nextSibling);
+  // store data on element for retrieval
+  wrap.dataset.q=question;wrap.dataset.brand=brand;wrap.dataset.ai=aiResponse.substring(0,500);
 }
 
 function showFbNote(fbId){
-  const noteEl=document.getElementById(fbId+'_note');
-  if(noteEl){noteEl.style.display='flex';}
+  const n=document.getElementById(fbId+'_note');
+  if(n){n.style.display='flex';}
   document.getElementById(fbId+'_down')?.classList.add('active-down');
 }
 
-function submitFeedback(fbId, rating, question, brand, aiResponse, txtId){
+function submitFeedback(fbId,rating,txtId){
   const freeText=txtId?document.getElementById(txtId)?.value.trim():'';
   const upBtn=document.getElementById(fbId+'_up');
   const downBtn=document.getElementById(fbId+'_down');
+  const row=upBtn?.closest('.feedback-row');
+  const q=row?.dataset.q||'';
+  const brand=row?.dataset.brand||'all';
+  const ai=row?.dataset.ai||'';
   if(rating==='thumbs_up'){upBtn?.classList.add('active-up');downBtn?.classList.remove('active-down');}
   else{downBtn?.classList.add('active-down');upBtn?.classList.remove('active-up');}
-  // hide note row, show done
-  const noteEl=document.getElementById(fbId+'_note');
-  if(noteEl)noteEl.style.display='none';
-  const row=upBtn?.closest('.feedback-row');
-  if(row){
-    const done=document.createElement('span');
-    done.className='fb-done';
-    done.textContent=rating==='thumbs_up'?' Glad it helped!'>' Logged — thanks for the feedback';
-    row.appendChild(done);
-  }
-  paLog(PA_FEEDBACK_URL,{
-    timestamp: new Date().toISOString(),
-    question,
-    brandContext: brand,
-    aiResponse: aiResponse.substring(0,500),
-    rating,
-    freeText: freeText||'',
-    userAgent: navigator.userAgent
-  });
+  const n=document.getElementById(fbId+'_note');if(n)n.style.display='none';
+  if(row){const done=document.createElement('span');done.className='fb-done';done.textContent=rating==='thumbs_up'?' Glad it helped!':" Logged — thanks";row.appendChild(done);}
+  paLog(PA_FEEDBACK_URL,{timestamp:new Date().toISOString(),question:q,brandContext:brand,aiResponse:ai,rating,freeText:freeText||'',userAgent:navigator.userAgent});
 }
 
 function addMsg(role,html){
@@ -888,8 +904,6 @@ function addMsg(role,html){
   const d=document.createElement('div');d.className='msg m'+role;d.innerHTML=html;
   box.appendChild(d);box.scrollTop=box.scrollHeight;return d;
 }
-
-// ── CONSOLE ────────────────────────────────────────────────
 function refreshConsole(){
   document.getElementById('con-session-start').textContent=analytics.sessionStart.toLocaleTimeString();
   document.getElementById('con-refreshed').textContent=new Date().toLocaleTimeString();
@@ -975,58 +989,6 @@ function renderQueryLog(){
     <td class="${q.hits===0?'q-hits-low':'q-hits-ok'}" style="text-align:right">${q.hits===0?'⚠ 0':q.hits}</td>
     <td style="color:var(--text3);font-size:11px;text-align:right">${new Date(q.ts).toLocaleTimeString()}</td>
   </tr>`).join('');
-}
-
-// ── ANALYTICS ──────────────────────────────────────────────
-// ── POWER AUTOMATE LOGGING ENDPOINTS ───────────────────────
-const PA_DOC_VIEW_URL  = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/80247b7e487a4e439f46f475bb90f0ce/triggers/manual/paths/invoke?api-version=1';
-const PA_SEARCH_URL    = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6c4f063274df450a9e47643bb7a252be/triggers/manual/paths/invoke?api-version=1';
-const PA_AI_QUERY_URL  = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d4623022a52d47058523f135931324b9/triggers/manual/paths/invoke?api-version=1';
-const PA_FEEDBACK_URL  = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6e710e13967645e8bd7c1b9345a136b1/triggers/manual/paths/invoke?api-version=1';
-
-function paLog(url, payload){
-  fetch(url, {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify(payload)
-  }).catch(e=>console.warn('[KB:log error]',e));
-}
-
-function logQuery(q, brand, hits){
-  const entry={q, brand:brand||'all', hits, ts:new Date().toISOString()};
-  analytics.queries.push(entry);
-  document.getElementById('s-queries').textContent=analytics.queries.length;
-  console.log('[KB:query]',entry);
-  paLog(PA_AI_QUERY_URL, {
-    timestamp: entry.ts,
-    question: q,
-    brandContext: brand||'all',
-    userAgent: navigator.userAgent
-  });
-}
-
-function logDocView(doc){
-  const entry={name:doc.name, brand:doc.brand, ts:new Date().toISOString()};
-  analytics.docViews.push(entry);
-  console.log('[KB:view]',entry);
-  paLog(PA_DOC_VIEW_URL, {
-    timestamp: entry.ts,
-    docName: doc.name.replace(/\.pdf$/i,''),
-    brand: doc.brand,
-    docType: doc.type||'',
-    userAgent: navigator.userAgent
-  });
-}
-
-function logSearch(term, resultCount){
-  const ts = new Date().toISOString();
-  console.log('[KB:search]', {term, resultCount, ts});
-  paLog(PA_SEARCH_URL, {
-    timestamp: ts,
-    searchTerm: term,
-    resultCount: resultCount,
-    userAgent: navigator.userAgent
-  });
 }
 
 // ── BANNER ─────────────────────────────────────────────────
