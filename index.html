@@ -278,6 +278,10 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
       <h1>Control Console</h1>
       <p>Usage analytics, query intelligence, and knowledgebase health.</p>
       <div class="ch-meta"><div>Session started: <span id="con-session-start">—</span></div><div>Last refreshed: <span id="con-refreshed">—</span></div></div>
+      <div style="display:flex;gap:0;margin-top:12px;border:1px solid var(--border2);border-radius:var(--rsm);width:fit-content;overflow:hidden">
+        <button id="con-toggle-session" onclick="setConsoleMode('session')" style="padding:6px 18px;font-size:12px;font-weight:600;border:none;cursor:pointer;background:var(--red);color:#fff;transition:background .15s">This Session</button>
+        <button id="con-toggle-alltime" onclick="setConsoleMode('alltime')" style="padding:6px 18px;font-size:12px;font-weight:600;border:none;cursor:pointer;background:var(--surface2);color:var(--text3);transition:background .15s">All Time</button>
+      </div>
     </div>
     <div class="kpi-row">
       <div class="kpi"><div class="kv" id="kpi-queries">0</div><div class="kl">AI Queries</div><div class="kd kd-neu">This session</div></div>
@@ -1130,15 +1134,66 @@ function addMsg(role,html){
   const d=document.createElement('div');d.className='msg m'+role;d.innerHTML=html;
   box.appendChild(d);box.scrollTop=box.scrollHeight;return d;
 }
+let consoleMode='session';
+let allTimeCache=null;
+
+function setConsoleMode(mode){
+  consoleMode=mode;
+  document.getElementById('con-toggle-session').style.background=mode==='session'?'var(--red)':'var(--surface2)';
+  document.getElementById('con-toggle-session').style.color=mode==='session'?'#fff':'var(--text3)';
+  document.getElementById('con-toggle-alltime').style.background=mode==='alltime'?'var(--red)':'var(--surface2)';
+  document.getElementById('con-toggle-alltime').style.color=mode==='alltime'?'#fff':'var(--text3)';
+  refreshConsole();
+}
+
+function normalizeGasData(sheets){
+  // AIQueries rows: [ts, question, brandContext, userAgent]
+  const queries=(sheets.AIQueries||[]).map(r=>({ts:r[0]||'',q:r[1]||'',brand:r[2]||'all',hits:1}));
+  // DocViews rows: [ts, docName, brand, docType, userAgent]
+  const docViews=(sheets.DocViews||[]).map(r=>({ts:r[0]||'',name:r[1]||'',brand:r[2]||''}));
+  return{queries,docViews,sessionStart:new Date(0)};
+}
+
 function refreshConsole(){
-  document.getElementById('con-session-start').textContent=analytics.sessionStart.toLocaleTimeString();
+  if(consoleMode==='alltime'){
+    if(allTimeCache){
+      renderConsoleWith(allTimeCache);
+    } else {
+      // show loading state
+      ['top-queries-list','pain-points-list','brand-bar-chart','top-docs-list','query-log-body'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el)el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:12px 0">Loading…</div>';
+      });
+      document.getElementById('kpi-queries').textContent='…';
+      document.getElementById('kpi-doc-views').textContent='…';
+      document.getElementById('kpi-zero-hits').textContent='…';
+      fetch('https://cshelper-proxy.zwhill.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:GAS_URL,payload:{action:'getAllData'}})})
+        .then(r=>r.json())
+        .then(data=>{
+          allTimeCache=normalizeGasData(data);
+          renderConsoleWith(allTimeCache);
+        })
+        .catch(e=>{
+          document.getElementById('top-queries-list').innerHTML=`<div style="color:#f66;font-size:13px">Error loading data: ${esc(e.message)}</div>`;
+        });
+    }
+    return;
+  }
+  renderConsoleWith(analytics);
+}
+
+function renderConsoleWith(data){
+  document.getElementById('con-session-start').textContent=data.sessionStart?data.sessionStart.toLocaleTimeString():'—';
   document.getElementById('con-refreshed').textContent=new Date().toLocaleTimeString();
-  document.getElementById('kpi-queries').textContent=analytics.queries.length;
-  document.getElementById('kpi-doc-views').textContent=analytics.docViews.length;
+  document.getElementById('kpi-queries').textContent=data.queries.length;
+  document.getElementById('kpi-doc-views').textContent=data.docViews.length;
   document.getElementById('kpi-docs').textContent=allDocs.length;
-  const zh=analytics.queries.filter(q=>q.hits===0);
+  const zh=data.queries.filter(q=>q.hits===0);
   document.getElementById('kpi-zero-hits').textContent=zh.length;
+  const prev=analytics;
+  analytics=data;
   renderTopQueries();renderPainPoints(zh);renderBrandChart();renderTopDocs();renderSyncHealth();renderQueryLog();
+  analytics=prev;
   document.getElementById('con-last-sync').textContent=lastSyncMeta.time?new Date(lastSyncMeta.time).toLocaleString():'Never';
   document.getElementById('con-sync-type').textContent=lastSyncMeta.type||'—';
   document.getElementById('con-sync-changes').textContent=lastSyncMeta.time?`+${lastSyncMeta.added||0} ~${lastSyncMeta.modified||0} -${lastSyncMeta.deleted||0}`:'—';
