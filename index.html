@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSHelper 1.0.3</title>
+<title>CSHelper 1.0.4</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -97,12 +97,9 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .pill-live{font-size:9px;color:var(--green)}
 
 /* AI PANEL */
-#aip{width:320px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;flex-grow:1}
-#aip.closed{width:42px}
-#ait{background:none;border:none;border-bottom:1px solid var(--border);color:var(--text2);cursor:pointer;padding:12px;font-size:14px;display:flex;align-items:center;gap:8px;width:100%;white-space:nowrap;overflow:hidden}
-#ait:hover{color:#fff}#aip.closed #ait{border-bottom:none}#aip.closed #ait .lbl{display:none}
-.aihd{padding:10px 13px;border-bottom:1px solid var(--border);font-weight:600;font-size:13px;color:#fff;display:flex;align-items:center;gap:8px}
-.aidot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite;flex-shrink:0}
+#aip{width:320px;background:var(--surface);display:flex;flex-direction:column;flex-shrink:0;flex-grow:1}
+#aip-left-border{width:4px;cursor:col-resize;flex-shrink:0;background:var(--border);transition:background .15s}
+#aip-left-border:hover,#aip-left-border.dragging{background:var(--red)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}.shake{animation:shake .35s ease}
 .aictx{padding:6px 12px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px}
@@ -128,7 +125,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 #aii:focus{border-color:var(--red)}
 #ais{background:var(--red);border:none;color:#fff;border-radius:var(--rsm);padding:0 13px;cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0}
 #ais:hover{background:var(--red-dark)}#ais:disabled{background:#333;cursor:not-allowed}
-#aip.closed .aihd,#aip.closed .aictx,#aip.closed #msgs,#aip.closed #aiw{display:none}
+#aip.closed .aictx,#aip.closed #msgs,#aip.closed #aiw{display:none}
 
 /* CONSOLE */
 .console-header{margin-bottom:24px}.console-header h1{font-size:22px;font-weight:600;color:#fff;margin-bottom:4px}.console-header p{font-size:13px;color:var(--text3)}
@@ -261,9 +258,8 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
       </div>
       <div id="grid"></div>
     </div>
+    <div id="aip-left-border"></div>
     <div id="aip">
-      <button id="ait" onclick="toggleAI()"><span>🤖</span><span class="lbl">AI Assistant</span></button>
-      <div class="aihd"><span class="aidot"></span>AI Assistant<span style="font-size:11px;color:var(--text3);margin-left:auto" id="ai-ctx-lbl"></span></div>
       <div class="aictx">Context: <span class="ctxb" id="ctx-b">All Brands</span><span style="margin-left:auto;cursor:pointer;color:#444" onclick="clearCtx()">✕</span></div>
       <div id="msgs"><div class="msg msys">Ask me anything about DiabloSport, Edge, Superchips, or Range. I search your live SharePoint knowledgebase before answering.</div></div>
       <div id="aiw">
@@ -327,7 +323,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────
-const VERSION = '1.0.3';
+const VERSION = '1.0.4';
 const ADMIN_PASSWORD = 'holley2025'; // Change before deploying
 const DRIVE_ID = 'b!EfZxkrs-dEGVFhCFYOUKwmSNQKpiLb5MpRWvv3Vv30zqJE9Ptb93TYuxqw9XdR20';
 const FOLDER_IDS = {
@@ -649,6 +645,33 @@ function toggleSidebar(){
   btn.innerHTML=sidebarOpen?'&#9666;':'&#9656;';
   btn.style.left=sidebarOpen?'196px':'0';
 }
+
+// ── AI PANEL RESIZE ────────────────────────────────────────
+(function(){
+  const handle=document.getElementById('aip-left-border');
+  const aip=document.getElementById('aip');
+  let dragging=false,startX=0,startW=0;
+  handle.addEventListener('mousedown',e=>{
+    dragging=true;startX=e.clientX;startW=aip.offsetWidth;
+    handle.classList.add('dragging');
+    document.body.style.cursor='col-resize';
+    document.body.style.userSelect='none';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    const maxW=window.innerWidth*0.6;
+    const newW=Math.min(maxW,Math.max(220,startW+(startX-e.clientX)));
+    aip.style.width=newW+'px';
+  });
+  document.addEventListener('mouseup',()=>{
+    if(!dragging)return;
+    dragging=false;
+    handle.classList.remove('dragging');
+    document.body.style.cursor='';
+    document.body.style.userSelect='';
+  });
+})();
 
 
 // ── TOUR ───────────────────────────────────────────────────
@@ -1297,7 +1320,7 @@ loadSyncState();
 updateSyncFooter();
 updateCounts();
 applyFilters();
-showBanner('info','CSHelper 1.0.3 loaded — 226 documents ready. Admin: click your name to unlock sync.');
+showBanner('info','CSHelper 1.0.4 loaded — 226 documents ready. Admin: click your name to unlock sync.');
 </script>
 <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
 </body>
