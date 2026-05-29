@@ -805,14 +805,11 @@ function openDoc(id){
 function closeModal(){document.getElementById('modal').classList.remove('open');}
 document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
 
-// ── POWER AUTOMATE LOGGING ─────────────────────────────────
-const PA_DOC_VIEW_URL = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/80247b7e487a4e439f46f475bb90f0ce/triggers/manual/paths/invoke?api-version=1';
-const PA_SEARCH_URL   = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6c4f063274df450a9e47643bb7a252be/triggers/manual/paths/invoke?api-version=1';
-const PA_AI_QUERY_URL = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d4623022a52d47058523f135931324b9/triggers/manual/paths/invoke?api-version=1';
-const PA_FEEDBACK_URL = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6e710e13967645e8bd7c1b9345a136b1/triggers/manual/paths/invoke?api-version=1';
+// ── GOOGLE APPS SCRIPT LOGGING ──────────────────────────────
+const GAS_URL='https://script.google.com/macros/s/AKfycbyVdmcUve0LV3K8i60qIffHyiBUccbHNn6r3I-2RGNrcKd58SM68-nDH1ukx6j1POY61Q/exec';
 
-function paLog(url,payload){
-  fetch('https://cshelper-proxy.zwhill.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:url,payload})}).catch(e=>console.warn('[KB:log error]',e));
+function gasLog(sheet,row){
+  fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sheet,row})}).catch(e=>console.warn('[KB:log error]',e));
 }
 
 function logQuery(q,brand,hits){
@@ -820,17 +817,17 @@ function logQuery(q,brand,hits){
   analytics.queries.push(entry);
   document.getElementById('s-queries').textContent=analytics.queries.length;
   console.log('[KB:query]',entry);
-  paLog(PA_AI_QUERY_URL,{timestamp:entry.ts,question:q,brandContext:brand||'all',userAgent:navigator.userAgent});
+  gasLog('AIQueries',[entry.ts,q,brand||'all',navigator.userAgent]);
 }
 function logDocView(doc){
   const entry={name:doc.name,brand:doc.brand,ts:new Date().toISOString()};
   analytics.docViews.push(entry);
   console.log('[KB:view]',entry);
-  paLog(PA_DOC_VIEW_URL,{timestamp:entry.ts,docName:doc.name.replace(/\.pdf$/i,''),brand:doc.brand,docType:doc.type||'',userAgent:navigator.userAgent});
+  gasLog('DocViews',[entry.ts,doc.name.replace(/\.pdf$/i,''),doc.brand,doc.type||'',navigator.userAgent]);
 }
 function logSearch(term,resultCount){
   console.log('[KB:search]',{term,resultCount});
-  paLog(PA_SEARCH_URL,{timestamp:new Date().toISOString(),searchTerm:term,resultCount:resultCount,userAgent:navigator.userAgent});
+  gasLog('Searches',[new Date().toISOString(),term,resultCount,navigator.userAgent]);
 }
 
 // ── AI ─────────────────────────────────────────────────────
@@ -922,7 +919,7 @@ function submitFeedback(fbId,rating,txtId){
   else{downBtn?.classList.add('active-down');upBtn?.classList.remove('active-up');}
   const n=document.getElementById(fbId+'_note');if(n)n.style.display='none';
   if(row){const done=document.createElement('span');done.className='fb-done';done.textContent=rating==='thumbs_up'?' Glad it helped!':" Logged — thanks";row.appendChild(done);}
-  paLog(PA_FEEDBACK_URL,{timestamp:new Date().toISOString(),question:q,brandContext:brand,aiResponse:ai,rating,freeText:freeText||'',userAgent:navigator.userAgent});
+  gasLog('Feedback',[new Date().toISOString(),q,brand,ai,rating,freeText||'',navigator.userAgent]);
 }
 
 function addMsg(role,html){
