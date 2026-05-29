@@ -1168,7 +1168,7 @@ function refreshConsole(){
       document.getElementById('kpi-queries').textContent='…';
       document.getElementById('kpi-doc-views').textContent='…';
       document.getElementById('kpi-zero-hits').textContent='…';
-      fetch('https://cshelper-proxy.zwhill.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:GAS_URL,payload:{action:'getAllData'}})})
+      fetch('https://cshelper-proxy.zwhill.workers.dev/?target='+encodeURIComponent(GAS_URL))
         .then(r=>r.json())
         .then(data=>{
           allTimeCache=normalizeGasData(data);
