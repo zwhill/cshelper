@@ -849,7 +849,7 @@ async function ask(){
   const docCtx=hits.map(h=>`[${h.name?.replace(/\.pdf$/i,'')}]: ${h.snippet||''}`).join('\n');
   const sys=`You are an expert technical customer support assistant for Holley's automotive tuning brands: DiabloSport, Edge Products, Superchips, and Range Technology.${aiCtx?` Current brand context: ${aiCtx}.`:''}\n\nRelevant knowledgebase documents:\n${docCtx||'No specific matches — use general brand knowledge.'}\n\nAnswer directly and practically. Name specific documents when relevant. Step-by-step for procedures. Under 200 words unless a procedure requires more. You are helping a tech support professional — be precise.`;
   try{
-    const res=await fetch('https://cshelper-proxy.zwhill.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5-20250514',max_tokens:1000,system:sys,messages:[{role:'user',content:q}]})});
+    const res=await fetch('https://cshelper-proxy.zwhill.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,system:sys,messages:[{role:'user',content:q}]})});
     const data=await res.json();
     const text=data.content?.find(b=>b.type==='text')?.text||'No response.';
     let html=text.replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
