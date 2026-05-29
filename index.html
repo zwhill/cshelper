@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSHelper 1.0.6</title>
+<title>CSHelper 1.0.7</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -50,7 +50,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 #view-console{display:none;flex:1;overflow-y:auto;padding:24px}
 #sidebar{width:0;background:var(--surface);border-right:1px solid var(--border);padding:10px 0;flex-shrink:0;overflow:hidden;display:flex;flex-direction:column;transition:width .2s}
 #sidebar.open{width:196px;overflow-y:auto}
-#main{flex:0 0 auto;overflow-y:auto;padding:18px 20px;min-width:0}
+#main{flex:1 1 0;overflow-y:auto;padding:18px 20px;min-width:0}
 #main::-webkit-scrollbar,#sidebar::-webkit-scrollbar{width:5px}
 #main::-webkit-scrollbar-track,#sidebar::-webkit-scrollbar-track{background:var(--bg)}
 #main::-webkit-scrollbar-thumb,#sidebar::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
@@ -97,7 +97,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .pill-live{font-size:9px;color:var(--green)}
 
 /* AI PANEL */
-#aip{width:320px;background:var(--surface);display:flex;flex-direction:column;flex-shrink:0;flex-grow:1}
+#aip{width:320px;background:var(--surface);display:flex;flex-direction:column;flex-shrink:0;flex-grow:0}
 #aip-left-border{width:4px;cursor:col-resize;flex-shrink:0;background:var(--border);transition:background .15s}
 #aip-left-border:hover,#aip-left-border.dragging{background:var(--red)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
@@ -324,7 +324,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────
-const VERSION = '1.0.6';
+const VERSION = '1.0.7';
 const ADMIN_PASSWORD = 'holley2025'; // Change before deploying
 const DRIVE_ID = 'b!EfZxkrs-dEGVFhCFYOUKwmSNQKpiLb5MpRWvv3Vv30zqJE9Ptb93TYuxqw9XdR20';
 const FOLDER_IDS = {
@@ -637,23 +637,29 @@ function submitAgentName(){
 document.getElementById('name-modal-input').addEventListener('keydown',e=>{if(e.key==='Enter')submitAgentName();});
 
 // ── SIDEBAR TOGGLE ─────────────────────────────────────────
+// #sidebar: flex-shrink:0, width controlled by .open class (CSS transition)
+// #main:    flex:1 1 0  — absorbs all space not taken by sidebar or aip
+// #aip:     flex-shrink:0, flex-grow:0 — fixed width, resized by drag only
 let sidebarOpen=false;
 function toggleSidebar(){
   sidebarOpen=!sidebarOpen;
-  const sb=document.getElementById('sidebar');
+  document.getElementById('sidebar').classList.toggle('open',sidebarOpen);
   const btn=document.getElementById('sidebar-toggle');
-  sb.classList.toggle('open',sidebarOpen);
   btn.innerHTML=sidebarOpen?'&#9666;':'&#9656;';
   btn.style.left=sidebarOpen?'196px':'0';
 }
 
 // ── AI PANEL RESIZE ────────────────────────────────────────
+// Dragging left border: left=wider (startX > e.clientX → positive delta)
+// #main flexes to compensate automatically.
 (function(){
   const handle=document.getElementById('aip-left-border');
   const aip=document.getElementById('aip');
   let dragging=false,startX=0,startW=0;
   handle.addEventListener('mousedown',e=>{
-    dragging=true;startX=e.clientX;startW=aip.offsetWidth;
+    dragging=true;
+    startX=e.clientX;
+    startW=aip.offsetWidth;
     handle.classList.add('dragging');
     document.body.style.cursor='col-resize';
     document.body.style.userSelect='none';
@@ -661,9 +667,10 @@ function toggleSidebar(){
   });
   document.addEventListener('mousemove',e=>{
     if(!dragging)return;
+    // startX - e.clientX: dragging left (e.clientX < startX) = positive = wider
+    const delta=startX-e.clientX;
     const maxW=window.innerWidth*0.6;
-    const newW=Math.min(maxW,Math.max(220,startW+(e.clientX-startX)));
-    aip.style.width=newW+'px';
+    aip.style.width=Math.min(maxW,Math.max(220,startW+delta))+'px';
   });
   document.addEventListener('mouseup',()=>{
     if(!dragging)return;
@@ -1014,7 +1021,6 @@ function autoGrowInput(){
 }
 document.getElementById('aii').addEventListener('input',autoGrowInput);
 // Pin #main at its natural width so sidebar open/close only affects #aip
-requestAnimationFrame(()=>{const m=document.getElementById('main');m.style.width=m.offsetWidth+'px';});
 document.getElementById('skip-tour-chk').checked=!!localStorage.getItem('cs_kb_toured');
 document.getElementById('version-display').textContent='v'+VERSION;
 
@@ -1340,7 +1346,7 @@ loadSyncState();
 updateSyncFooter();
 updateCounts();
 applyFilters();
-showBanner('info','CSHelper 1.0.6 loaded — 226 documents ready. Admin: click your name to unlock sync.');
+showBanner('info','CSHelper 1.0.7 loaded — 226 documents ready. Admin: click your name to unlock sync.');
 </script>
 <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
 </body>
