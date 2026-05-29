@@ -1148,11 +1148,14 @@ function setConsoleMode(mode){
 
 function normalizeGasData(sheets){
   const safe=arr=>(Array.isArray(arr)?arr:[]);
+  const rows=arr=>safe(arr).slice(1).filter(r=>Array.isArray(r));
   // AIQueries rows: [ts, question, brandContext, userAgent]
-  const queries=safe(sheets.AIQueries).filter(r=>Array.isArray(r)).map(r=>({ts:r[0]||'',q:r[1]||'',brand:r[2]||'all',hits:1}));
+  const queries=rows(sheets.AIQueries).map(r=>({ts:r[0]||'',q:r[1]||'',brand:r[2]||'all',hits:1}));
   // DocViews rows: [ts, docName, brand, docType, userAgent]
-  const docViews=safe(sheets.DocViews).filter(r=>Array.isArray(r)).map(r=>({ts:r[0]||'',name:r[1]||'',brand:r[2]||''}));
-  return{queries,docViews,sessionStart:new Date(0)};
+  const docViews=rows(sheets.DocViews).map(r=>({ts:r[0]||'',name:r[1]||'',brand:r[2]||''}));
+  // Feedback rows: [ts, question, brandContext, aiResponse, rating, freeText, userAgent]
+  const negFeedback=rows(sheets.Feedback).filter(r=>(r[4]||'').toLowerCase()==='thumbs_down').map(r=>({ts:r[0]||'',q:r[1]||'',brand:r[2]||'all',note:r[5]||''}));
+  return{queries,docViews,negFeedback,sessionStart:new Date(0)};
 }
 
 function refreshConsole(){
@@ -1193,7 +1196,7 @@ function renderConsoleWith(data){
   document.getElementById('kpi-zero-hits').textContent=zh.length;
   const prev=analytics;
   analytics=data;
-  renderTopQueries();renderPainPoints(zh);renderBrandChart();renderTopDocs();renderSyncHealth();renderQueryLog();
+  renderTopQueries();renderPainPoints(zh,data.negFeedback||[]);renderBrandChart();renderTopDocs();renderSyncHealth();renderQueryLog();
   analytics=prev;
   document.getElementById('con-last-sync').textContent=lastSyncMeta.time?new Date(lastSyncMeta.time).toLocaleString():'Never';
   document.getElementById('con-sync-type').textContent=lastSyncMeta.type||'—';
@@ -1216,15 +1219,24 @@ function renderTopQueries(){
     </tr>`).join('')+'</tbody></table>';
 }
 
-function renderPainPoints(zh){
-  document.getElementById('pp-badge').textContent=zh.length+' gaps';
-  if(!zh.length){document.getElementById('pain-points-list').innerHTML='<div style="color:var(--green);font-size:13px">✓ All queries matched documents.</div>';return;}
-  const deduped=[...new Map(zh.map(q=>[q.q.toLowerCase(),q])).values()].slice(0,6);
-  document.getElementById('pain-points-list').innerHTML=deduped.map(q=>`
+function renderPainPoints(zh,negFb){
+  negFb=negFb||[];
+  const total=zh.length+negFb.length;
+  document.getElementById('pp-badge').textContent=total+' gaps';
+  if(!total){document.getElementById('pain-points-list').innerHTML='<div style="color:var(--green);font-size:13px">✓ All queries matched documents.</div>';return;}
+  const dedupedZh=[...new Map(zh.map(q=>[q.q.toLowerCase(),q])).values()].slice(0,6);
+  const dedupedFb=[...new Map(negFb.map(q=>[q.q.toLowerCase(),q])).values()].slice(0,6);
+  const zhHtml=dedupedZh.map(q=>`
     <div class="pp-item"><span class="pp-icon">⚠</span>
       <div class="pp-q">${esc(q.q)}</div>
       <div class="pp-meta"><div style="color:${BRANDS[q.brand]?.color||'#888'};font-size:10px;font-weight:700;margin-bottom:3px">${q.brand||'All'}</div><span class="pp-tag">No docs</span></div>
     </div>`).join('');
+  const fbHtml=dedupedFb.map(q=>`
+    <div class="pp-item"><span class="pp-icon" style="color:#f88">👎</span>
+      <div class="pp-q">${esc(q.q)}${q.note?`<div style="font-size:11px;color:var(--text3);margin-top:2px">"${esc(q.note)}"</div>`:''}</div>
+      <div class="pp-meta"><div style="color:${BRANDS[q.brand]?.color||'#888'};font-size:10px;font-weight:700;margin-bottom:3px">${q.brand||'All'}</div><span class="pp-tag" style="background:#2a0d0d;color:#f88;border-color:#5a1a1a">Bad answer</span></div>
+    </div>`).join('');
+  document.getElementById('pain-points-list').innerHTML=zhHtml+fbHtml;
 }
 
 function renderBrandChart(){
