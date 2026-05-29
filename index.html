@@ -812,7 +812,7 @@ const PA_AI_QUERY_URL = 'https://default374f5277756f4f27b400d68332a291.7b.enviro
 const PA_FEEDBACK_URL = 'https://default374f5277756f4f27b400d68332a291.7b.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/6e710e13967645e8bd7c1b9345a136b1/triggers/manual/paths/invoke?api-version=1';
 
 function paLog(url,payload){
-  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(e=>console.warn('[KB:log error]',e));
+  fetch('https://cshelper-proxy.zwhill.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:url,payload})}).catch(e=>console.warn('[KB:log error]',e));
 }
 
 function logQuery(q,brand,hits){
