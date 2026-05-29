@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSHelper 1.0.5</title>
+<title>CSHelper 1.0.6</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -125,7 +125,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 #aii:focus{border-color:var(--red)}
 #ais{background:var(--red);border:none;color:#fff;border-radius:var(--rsm);padding:0 13px;cursor:pointer;font-size:13px;font-weight:600;flex-shrink:0}
 #ais:hover{background:var(--red-dark)}#ais:disabled{background:#333;cursor:not-allowed}
-#aip.closed .aictx,#aip.closed #msgs,#aip.closed #aiw{display:none}
+#aip.closed .aihd,#aip.closed .aictx,#aip.closed #msgs,#aip.closed #aiw{display:none}
 
 /* CONSOLE */
 .console-header{margin-bottom:24px}.console-header h1{font-size:22px;font-weight:600;color:#fff;margin-bottom:4px}.console-header p{font-size:13px;color:var(--text3)}
@@ -260,6 +260,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
     </div>
     <div id="aip-left-border"></div>
     <div id="aip">
+      <div class="aihd" style="padding:10px 13px 9px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--text2);text-transform:uppercase;flex-shrink:0">AI Assistant</div>
       <div class="aictx">Context: <span class="ctxb" id="ctx-b">All Brands</span><span style="margin-left:auto;cursor:pointer;color:#444" onclick="clearCtx()">✕</span></div>
       <div id="msgs"><div class="msg msys">Ask me anything about DiabloSport, Edge, Superchips, or Range. I search your live SharePoint knowledgebase before answering.</div></div>
       <div id="aiw">
@@ -323,7 +324,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────
-const VERSION = '1.0.5';
+const VERSION = '1.0.6';
 const ADMIN_PASSWORD = 'holley2025'; // Change before deploying
 const DRIVE_ID = 'b!EfZxkrs-dEGVFhCFYOUKwmSNQKpiLb5MpRWvv3Vv30zqJE9Ptb93TYuxqw9XdR20';
 const FOLDER_IDS = {
@@ -661,7 +662,7 @@ function toggleSidebar(){
   document.addEventListener('mousemove',e=>{
     if(!dragging)return;
     const maxW=window.innerWidth*0.6;
-    const newW=Math.min(maxW,Math.max(220,startW+(startX-e.clientX)));
+    const newW=Math.min(maxW,Math.max(220,startW+(e.clientX-startX)));
     aip.style.width=newW+'px';
   });
   document.addEventListener('mouseup',()=>{
@@ -1339,7 +1340,7 @@ loadSyncState();
 updateSyncFooter();
 updateCounts();
 applyFilters();
-showBanner('info','CSHelper 1.0.5 loaded — 226 documents ready. Admin: click your name to unlock sync.');
+showBanner('info','CSHelper 1.0.6 loaded — 226 documents ready. Admin: click your name to unlock sync.');
 </script>
 <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
 </body>
