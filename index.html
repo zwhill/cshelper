@@ -780,7 +780,7 @@ function startTour(){
 }
 let allDocs=[...SEED_DOCS],activeBrand='all',aiCtx=null,aiOpen=true,activeDoc=null,currentRole='agent';
 let deltaTokens={},lastSyncMeta={};
-const analytics={queries:[],docViews:[],sessionStart:new Date()};
+let analytics={queries:[],docViews:[],sessionStart:new Date()};
 
 // ── ADMIN ──────────────────────────────────────────────────
 function promptAdminAccess(){
@@ -1147,10 +1147,11 @@ function setConsoleMode(mode){
 }
 
 function normalizeGasData(sheets){
+  const safe=arr=>(Array.isArray(arr)?arr:[]);
   // AIQueries rows: [ts, question, brandContext, userAgent]
-  const queries=(sheets.AIQueries||[]).map(r=>({ts:r[0]||'',q:r[1]||'',brand:r[2]||'all',hits:1}));
+  const queries=safe(sheets.AIQueries).filter(r=>Array.isArray(r)).map(r=>({ts:r[0]||'',q:r[1]||'',brand:r[2]||'all',hits:1}));
   // DocViews rows: [ts, docName, brand, docType, userAgent]
-  const docViews=(sheets.DocViews||[]).map(r=>({ts:r[0]||'',name:r[1]||'',brand:r[2]||''}));
+  const docViews=safe(sheets.DocViews).filter(r=>Array.isArray(r)).map(r=>({ts:r[0]||'',name:r[1]||'',brand:r[2]||''}));
   return{queries,docViews,sessionStart:new Date(0)};
 }
 
