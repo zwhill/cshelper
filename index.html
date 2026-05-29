@@ -48,8 +48,14 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 #app{display:flex;flex:1;overflow:hidden}
 #view-kb{display:flex;flex:1;overflow:hidden}
 #view-console{display:none;flex:1;overflow-y:auto;padding:24px}
-#sidebar{width:196px;background:var(--surface);border-right:1px solid var(--border);padding:10px 0;flex-shrink:0;overflow-y:auto;display:flex;flex-direction:column}
-#main{flex:1;overflow-y:auto;padding:18px 20px}
+#sidebar{width:0;background:var(--surface);border-right:1px solid var(--border);padding:10px 0;flex-shrink:0;overflow:hidden;display:flex;flex-direction:column;transition:width .2s}
+#sidebar.open{width:196px;overflow-y:auto}
+#main{flex:1;overflow-y:auto;padding:18px 20px;min-width:0}
+#sidebar-toggle{position:absolute;top:50%;transform:translateY(-50%);left:0;width:18px;height:40px;background:var(--surface);border:1px solid var(--border);border-left:none;border-radius:0 4px 4px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:10px;z-index:20;transition:left .2s,color .15s;user-select:none}
+#sidebar-toggle:hover{color:#fff}
+#view-kb{position:relative}
+#aip-resize-handle{width:5px;cursor:col-resize;flex-shrink:0;background:transparent;position:relative;z-index:20}
+#aip-resize-handle:hover,#aip-resize-handle.dragging{background:var(--red)}
 .ns{padding:4px 13px 2px;font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--text3);text-transform:uppercase;margin-top:10px}
 .ni{display:flex;align-items:center;gap:9px;padding:7px 13px;cursor:pointer;color:var(--text2);font-size:13px;transition:background .1s,color .1s;border-left:3px solid transparent}
 .ni:hover{background:var(--surface2);color:var(--text)}.ni.active{background:var(--surface2);color:#fff;border-left-color:var(--red)}
@@ -90,7 +96,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .pill-live{font-size:9px;color:var(--green)}
 
 /* AI PANEL */
-#aip{width:320px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:width .2s}
+#aip{width:320px;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
 #aip.closed{width:42px}
 #ait{background:none;border:none;border-bottom:1px solid var(--border);color:var(--text2);cursor:pointer;padding:12px;font-size:14px;display:flex;align-items:center;gap:8px;width:100%;white-space:nowrap;overflow:hidden}
 #ait:hover{color:#fff}#aip.closed #ait{border-bottom:none}#aip.closed #ait .lbl{display:none}
@@ -212,6 +218,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 
 <div id="app">
   <div id="view-kb">
+    <button id="sidebar-toggle" onclick="toggleSidebar()" title="Toggle sidebar">&#9656;</button>
     <div id="sidebar">
       <div class="ns">Browse</div>
       <div class="ni active" onclick="setView(this,'all')"><span class="nd" style="background:var(--red)"></span>All Documents<span class="nb" id="cnt-all"></span></div>
@@ -248,6 +255,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
       </div>
       <div id="grid"></div>
     </div>
+    <div id="aip-resize-handle"></div>
     <div id="aip">
       <button id="ait" onclick="toggleAI()"><span>🤖</span><span class="lbl">AI Assistant</span></button>
       <div class="aihd"><span class="aidot"></span>AI Assistant<span style="font-size:11px;color:var(--text3);margin-left:auto" id="ai-ctx-lbl"></span></div>
@@ -620,12 +628,60 @@ function submitAgentName(){
 }
 document.getElementById('name-modal-input').addEventListener('keydown',e=>{if(e.key==='Enter')submitAgentName();});
 
+// ── SIDEBAR TOGGLE ─────────────────────────────────────────
+let sidebarOpen=false;
+function toggleSidebar(){
+  sidebarOpen=!sidebarOpen;
+  const sb=document.getElementById('sidebar');
+  const btn=document.getElementById('sidebar-toggle');
+  sb.classList.toggle('open',sidebarOpen);
+  btn.innerHTML=sidebarOpen?'&#9666;':'&#9656;';
+  btn.style.left=sidebarOpen?'196px':'0';
+}
+
+// ── AI PANEL RESIZE ────────────────────────────────────────
+(function(){
+  const handle=document.getElementById('aip-resize-handle');
+  const aip=document.getElementById('aip');
+  let dragging=false,startX=0,startW=0;
+  handle.addEventListener('mousedown',e=>{
+    dragging=true;startX=e.clientX;startW=aip.offsetWidth;
+    handle.classList.add('dragging');
+    document.body.style.cursor='col-resize';
+    document.body.style.userSelect='none';
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!dragging)return;
+    const delta=startX-e.clientX; // dragging left border leftward increases width
+    const newW=Math.min(600,Math.max(220,startW+delta));
+    aip.style.width=newW+'px';
+  });
+  document.addEventListener('mouseup',()=>{
+    if(!dragging)return;
+    dragging=false;
+    handle.classList.remove('dragging');
+    document.body.style.cursor='';
+    document.body.style.userSelect='';
+  });
+})();
+
+// ── TOUR ───────────────────────────────────────────────────
 function startTour(){
+  // ensure sidebar is open for the sidebar step
+  if(!sidebarOpen)toggleSidebar();
+
   const steps=[
     {
       target:null,
       title:'Welcome to CSHelper',
       body:'This knowledgebase is backed by real documents from SharePoint across DiabloSport, Edge, Superchips, and Range. Try scenarios you deal with daily — installs, error codes, product questions. The more you use it, the more useful it gets.',
+      next:'Next'
+    },
+    {
+      target:'#sidebar',
+      title:'Browse by Brand',
+      body:'The left panel lets you browse documents by brand and category. Click any item to filter the document grid — useful when you know which brand you\'re working with.',
       next:'Next'
     },
     {
@@ -649,46 +705,53 @@ function startTour(){
   ];
   let step=0;
 
+  // backdrop: covers everything, pointer-events on so clicks don't fall through
   const overlay=document.createElement('div');
   overlay.id='tour-overlay';
-  overlay.style.cssText='position:fixed;inset:0;z-index:250;pointer-events:none';
+  overlay.style.cssText='position:fixed;inset:0;z-index:250;pointer-events:all';
 
   const backdrop=document.createElement('div');
-  backdrop.style.cssText='position:absolute;inset:0;background:rgba(0,0,0,.65);transition:clip-path .3s';
+  backdrop.style.cssText='position:absolute;inset:0;background:rgba(0,0,0,.65);pointer-events:none;transition:clip-path .3s';
 
+  // card sits above backdrop at z-index 252
   const card=document.createElement('div');
-  card.style.cssText='position:absolute;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius,8px);padding:24px 22px 20px;width:min(360px,88vw);box-shadow:0 8px 32px rgba(0,0,0,.5);pointer-events:all;transition:top .3s,left .3s';
+  card.style.cssText='position:fixed;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius,8px);padding:24px 22px 20px;width:min(360px,88vw);box-shadow:0 8px 32px rgba(0,0,0,.5);z-index:252;pointer-events:all';
 
   overlay.appendChild(backdrop);
-  overlay.appendChild(card);
   document.body.appendChild(overlay);
+  document.body.appendChild(card); // card outside overlay so it's always on top
+
+  function clearHighlight(){
+    document.querySelectorAll('.tour-highlight').forEach(el=>{
+      el.style.zIndex='';el.style.position='';el.classList.remove('tour-highlight');
+    });
+  }
 
   function endTour(){
     localStorage.setItem('cs_kb_toured','1');
+    clearHighlight();
     overlay.remove();
-    document.querySelectorAll('.tour-highlight').forEach(el=>{el.style.position='';el.style.zIndex='';el.classList.remove('tour-highlight');});
+    card.remove();
   }
 
   function renderStep(){
     const s=steps[step];
+    clearHighlight();
 
-    // clear previous highlight
-    document.querySelectorAll('.tour-highlight').forEach(el=>{el.style.position='';el.style.zIndex='';el.classList.remove('tour-highlight');});
-
-    // highlight target
     let rect=null;
     if(s.target){
       const el=document.querySelector(s.target);
       if(el){
         el.classList.add('tour-highlight');
+        // push element above the backdrop
         const cs=getComputedStyle(el);
-        if(cs.position==='static')el.style.position='relative';
-        el.style.zIndex='252';
+        if(cs.position==='static'||cs.position==='')el.style.position='relative';
+        el.style.zIndex='251';
         rect=el.getBoundingClientRect();
       }
     }
 
-    // backdrop with hole
+    // cut hole in backdrop
     if(rect){
       const pad=8;
       const t=rect.top-pad,l=rect.left-pad,b=rect.bottom+pad,r=rect.right+pad;
@@ -699,27 +762,27 @@ function startTour(){
 
     // position card
     const vw=window.innerWidth,vh=window.innerHeight;
+    const cardW=Math.min(360,vw*0.88),cardH=240,pad=16;
     if(!rect){
       card.style.top='50%';card.style.left='50%';card.style.transform='translate(-50%,-50%)';
     } else {
       card.style.transform='none';
-      const cardW=Math.min(360,vw*0.88),cardH=220,pad2=16;
-      let top=rect.bottom+pad2+8;
+      let top=rect.bottom+pad+8;
       let left=rect.left;
-      if(top+cardH>vh-pad2)top=rect.top-cardH-pad2-8;
-      if(top<pad2)top=pad2;
-      if(left+cardW>vw-pad2)left=vw-cardW-pad2;
-      if(left<pad2)left=pad2;
+      if(top+cardH>vh-pad)top=rect.top-cardH-pad-8;
+      if(top<pad)top=pad;
+      if(left+cardW>vw-pad)left=vw-cardW-pad;
+      if(left<pad)left=pad;
       card.style.top=top+'px';card.style.left=left+'px';
     }
 
     card.innerHTML=`
       <div style="font-size:11px;color:var(--text3);margin-bottom:6px;letter-spacing:.05em">STEP ${step+1} OF ${steps.length}</div>
       <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px">${s.title}</div>
-      <div style="font-size:13px;color:var(--text2,var(--text3));line-height:1.55;margin-bottom:18px">${s.body}</div>
+      <div style="font-size:13px;color:var(--text2,#999);line-height:1.55;margin-bottom:18px">${s.body}</div>
       <div style="display:flex;align-items:center;justify-content:space-between">
-        <span id="tour-skip" style="font-size:12px;color:var(--text3);cursor:pointer;text-decoration:underline;pointer-events:all">Skip Tour</span>
-        <button id="tour-next" style="background:var(--red,#e74c3c);border:none;border-radius:4px;color:#fff;padding:8px 20px;cursor:pointer;font-size:13px;font-weight:600;pointer-events:all">${s.next}</button>
+        <span id="tour-skip" style="font-size:12px;color:var(--text3);cursor:pointer;text-decoration:underline">Skip Tour</span>
+        <button id="tour-next" style="background:var(--red,#C8102E);border:none;border-radius:4px;color:#fff;padding:8px 20px;cursor:pointer;font-size:13px;font-weight:600">${s.next}</button>
       </div>`;
 
     document.getElementById('tour-skip').addEventListener('click',endTour);
