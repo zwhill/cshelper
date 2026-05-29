@@ -809,7 +809,7 @@ document.getElementById('modal').addEventListener('click',e=>{if(e.target===docu
 const GAS_URL='https://script.google.com/macros/s/AKfycbyVdmcUve0LV3K8i60qIffHyiBUccbHNn6r3I-2RGNrcKd58SM68-nDH1ukx6j1POY61Q/exec';
 
 function gasLog(sheet,row){
-  fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({sheet,row})}).catch(e=>console.warn('[KB:log error]',e));
+  fetch('https://cshelper-proxy.zwhill.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:GAS_URL,payload:{sheet,row}})}).catch(e=>console.warn('[KB:log error]',e));
 }
 
 function logQuery(q,brand,hits){
