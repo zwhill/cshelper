@@ -179,6 +179,14 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 </style>
 </head>
 <body>
+<div id="name-modal-overlay" style="position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:flex;align-items:center;justify-content:center">
+  <div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius,8px);padding:32px 28px;width:min(380px,90vw);display:flex;flex-direction:column;gap:16px">
+    <div style="font-size:16px;font-weight:700;color:var(--text)">Welcome to CSHelper</div>
+    <div style="font-size:13px;color:var(--text3)">Enter your name to get started.</div>
+    <input id="name-modal-input" type="text" placeholder="Your name" style="background:var(--surface2);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:14px;font-family:inherit;padding:9px 11px;outline:none" />
+    <button onclick="submitAgentName()" style="background:var(--red,#e74c3c);border:none;border-radius:4px;color:#fff;padding:10px;cursor:pointer;font-size:14px;font-weight:600">Get Started</button>
+  </div>
+</div>
 <div id="topbar">
   <div class="logo">TUNING<span>CS</span></div>
   <div id="sw">
@@ -601,6 +609,15 @@ const SEED_DOCS=[
 ];
 
 // ── STATE ──────────────────────────────────────────────────
+let agentName='';
+function submitAgentName(){
+  const inp=document.getElementById('name-modal-input');
+  const val=inp.value.trim();
+  if(!val){inp.style.borderColor='var(--red,#e74c3c)';inp.classList.add('shake');setTimeout(()=>inp.classList.remove('shake'),400);return;}
+  agentName=val;
+  document.getElementById('name-modal-overlay').remove();
+}
+document.getElementById('name-modal-input').addEventListener('keydown',e=>{if(e.key==='Enter')submitAgentName();});
 let allDocs=[...SEED_DOCS],activeBrand='all',aiCtx=null,aiOpen=true,activeDoc=null,currentRole='agent';
 let deltaTokens={},lastSyncMeta={};
 const analytics={queries:[],docViews:[],sessionStart:new Date()};
@@ -837,7 +854,7 @@ function openFbModal(fbId){
   submit.addEventListener('click',()=>{
     const freeText=txt.value.trim();
     if(!freeText){txt.style.borderColor='var(--red,#e74c3c)';txt.classList.add('shake');setTimeout(()=>txt.classList.remove('shake'),400);return;}
-    gasLog('Feedback',[new Date().toISOString(),q,brand,ai,'thumbs_down',freeText,navigator.userAgent]);
+    gasLog('Feedback',[agentName,new Date().toISOString(),q,brand,ai,'thumbs_down',freeText,navigator.userAgent]);
     if(row){const done=document.createElement('span');done.className='fb-done';done.textContent=' Logged — thanks';row.appendChild(done);}
     overlay.remove();
   });
@@ -855,17 +872,17 @@ function logQuery(q,brand,hits){
   analytics.queries.push(entry);
   document.getElementById('s-queries').textContent=analytics.queries.length;
   console.log('[KB:query]',entry);
-  gasLog('AIQueries',[entry.ts,q,brand||'all',navigator.userAgent]);
+  gasLog('AIQueries',[agentName,entry.ts,q,brand||'all',navigator.userAgent]);
 }
 function logDocView(doc){
   const entry={name:doc.name,brand:doc.brand,ts:new Date().toISOString()};
   analytics.docViews.push(entry);
   console.log('[KB:view]',entry);
-  gasLog('DocViews',[entry.ts,doc.name.replace(/\.pdf$/i,''),doc.brand,doc.type||'',navigator.userAgent]);
+  gasLog('DocViews',[agentName,entry.ts,doc.name.replace(/\.pdf$/i,''),doc.brand,doc.type||'',navigator.userAgent]);
 }
 function logSearch(term,resultCount){
   console.log('[KB:search]',{term,resultCount});
-  gasLog('Searches',[new Date().toISOString(),term,resultCount,navigator.userAgent]);
+  gasLog('Searches',[agentName,new Date().toISOString(),term,resultCount,navigator.userAgent]);
 }
 
 // ── AI ─────────────────────────────────────────────────────
@@ -945,7 +962,7 @@ function submitFeedback(fbId,rating){
   const ai=row?.dataset.ai||'';
   upBtn?.classList.add('active-up');downBtn?.classList.remove('active-down');
   if(row){const done=document.createElement('span');done.className='fb-done';done.textContent=' Glad it helped!';row.appendChild(done);}
-  gasLog('Feedback',[new Date().toISOString(),q,brand,ai,rating,'',navigator.userAgent]);
+  gasLog('Feedback',[agentName,new Date().toISOString(),q,brand,ai,rating,'',navigator.userAgent]);
 }
 
 function addMsg(role,html){
