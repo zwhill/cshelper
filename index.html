@@ -627,6 +627,7 @@ function submitAgentName(){
   const val=inp.value.trim();
   if(!val){inp.style.borderColor='var(--red,#e74c3c)';inp.classList.add('shake');setTimeout(()=>inp.classList.remove('shake'),400);return;}
   agentName=val;
+  document.getElementById('user-name').textContent=val;
   document.getElementById('name-modal-overlay').remove();
   if(!localStorage.getItem('cs_kb_toured'))startTour();
 }
@@ -1010,7 +1011,7 @@ function openFbModal(fbId){
   submit.addEventListener('click',()=>{
     const freeText=txt.value.trim();
     if(!freeText){txt.style.borderColor='var(--red,#e74c3c)';txt.classList.add('shake');setTimeout(()=>txt.classList.remove('shake'),400);return;}
-    gasLog('Feedback',[agentName,new Date().toISOString(),q,brand,ai,'thumbs_down',freeText,navigator.userAgent]);
+    gasLog('Feedback',[new Date().toISOString(),q,brand,ai,'thumbs_down',freeText,agentName+' | '+navigator.userAgent]);
     if(row){const done=document.createElement('span');done.className='fb-done';done.textContent=' Logged — thanks';row.appendChild(done);}
     overlay.remove();
   });
@@ -1028,17 +1029,17 @@ function logQuery(q,brand,hits){
   analytics.queries.push(entry);
   document.getElementById('s-queries').textContent=analytics.queries.length;
   console.log('[KB:query]',entry);
-  gasLog('AIQueries',[agentName,entry.ts,q,brand||'all',navigator.userAgent]);
+  gasLog('AIQueries',[entry.ts,q,brand||'all',agentName+' | '+navigator.userAgent]);
 }
 function logDocView(doc){
   const entry={name:doc.name,brand:doc.brand,ts:new Date().toISOString()};
   analytics.docViews.push(entry);
   console.log('[KB:view]',entry);
-  gasLog('DocViews',[agentName,entry.ts,doc.name.replace(/\.pdf$/i,''),doc.brand,doc.type||'',navigator.userAgent]);
+  gasLog('DocViews',[entry.ts,doc.name.replace(/\.pdf$/i,''),doc.brand,doc.type||'',agentName+' | '+navigator.userAgent]);
 }
 function logSearch(term,resultCount){
   console.log('[KB:search]',{term,resultCount});
-  gasLog('Searches',[agentName,new Date().toISOString(),term,resultCount,navigator.userAgent]);
+  gasLog('Searches',[new Date().toISOString(),term,resultCount,agentName+' | '+navigator.userAgent]);
 }
 
 // ── AI ─────────────────────────────────────────────────────
@@ -1118,7 +1119,7 @@ function submitFeedback(fbId,rating){
   const ai=row?.dataset.ai||'';
   upBtn?.classList.add('active-up');downBtn?.classList.remove('active-down');
   if(row){const done=document.createElement('span');done.className='fb-done';done.textContent=' Glad it helped!';row.appendChild(done);}
-  gasLog('Feedback',[agentName,new Date().toISOString(),q,brand,ai,rating,'',navigator.userAgent]);
+  gasLog('Feedback',[new Date().toISOString(),q,brand,ai,rating,'',agentName+' | '+navigator.userAgent]);
 }
 
 function addMsg(role,html){
