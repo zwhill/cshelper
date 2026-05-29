@@ -839,6 +839,31 @@ function clearCtx(){aiCtx=null;document.getElementById('ctx-b').textContent='All
 function aiKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ask();}}
 function askAbout(doc){if(!aiOpen)toggleAI();document.getElementById('aii').value=`Tell me about: ${doc.name.replace(/\.pdf$/i,'')}`;aiCtx=doc.brand;document.getElementById('ctx-b').textContent=doc.brand;ask();}
 
+function mdToHtml(text){
+  const lines=text.split('\n');
+  const out=[];
+  let inUl=false,inOl=false;
+  const closeList=()=>{if(inUl){out.push('</ul>');inUl=false;}if(inOl){out.push('</ol>');inOl=false;}};
+  const inline=s=>s
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/`([^`]+)`/g,'<code style="background:var(--surface2,#2a2a2a);padding:1px 4px;border-radius:3px;font-size:0.9em">$1</code>');
+  for(let i=0;i<lines.length;i++){
+    const l=lines[i];
+    const h=l.match(/^(#{1,4})\s+(.*)/);
+    const ul=l.match(/^[\*\-]\s+(.*)/);
+    const ol=l.match(/^\d+\.\s+(.*)/);
+    if(h){closeList();const lv=Math.min(h[1].length+1,5);out.push(`<h${lv} style="margin:8px 0 4px;font-size:${1.1-h[1].length*0.1}em">${inline(h[2])}</h${lv}>`);}
+    else if(ul){if(!inUl){if(inOl){out.push('</ol>');inOl=false;}out.push('<ul style="margin:4px 0 4px 18px;padding:0">');inUl=true;}out.push(`<li>${inline(ul[1])}</li>`);}
+    else if(ol){if(!inOl){if(inUl){out.push('</ul>');inUl=false;}out.push('<ol style="margin:4px 0 4px 18px;padding:0">');inOl=true;}out.push(`<li>${inline(ol[1])}</li>`);}
+    else if(l.trim()===''){closeList();out.push('<br>');}
+    else{closeList();out.push(`<p style="margin:3px 0">${inline(l)}</p>`);}
+  }
+  closeList();
+  return out.join('');
+}
+
 async function ask(){
   const inp=document.getElementById('aii');
   const q=inp.value.trim();if(!q)return;
@@ -852,7 +877,7 @@ async function ask(){
     const res=await fetch('https://cshelper-proxy.zwhill.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,system:sys,messages:[{role:'user',content:q}]})});
     const data=await res.json();
     const text=data.content?.find(b=>b.type==='text')?.text||'No response.';
-    let html=text.replace(/\n\n/g,'<br><br>').replace(/\n/g,'<br>');
+    let html=mdToHtml(text);
     if(hits.length)html+='<br><br><span style="font-size:11px;color:var(--text3)">Sources: '+hits.slice(0,3).map(h=>`<a href="${h.url}" target="_blank">${esc((h.name||'').replace(/\.pdf$/i,'').substring(0,35))}…</a>`).join(', ')+'</span>';
     loadingMsg.innerHTML=html;
     logQuery(q,aiCtx,hits.length);
