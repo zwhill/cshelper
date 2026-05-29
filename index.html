@@ -57,8 +57,6 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 #sidebar-toggle{position:absolute;top:8px;left:0;width:22px;height:28px;background:var(--red);border:none;border-radius:0 4px 4px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;z-index:20;transition:left .2s,background .15s;user-select:none}
 #sidebar-toggle:hover{background:var(--red-dark)}
 #view-kb{position:relative}
-#aip-resize-handle{width:5px;cursor:col-resize;flex-shrink:0;background:transparent;position:relative;z-index:20}
-#aip-resize-handle:hover,#aip-resize-handle.dragging{background:var(--red)}
 .ns{padding:4px 13px 2px;font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--text3);text-transform:uppercase;margin-top:10px}
 .ni{display:flex;align-items:center;gap:9px;padding:7px 13px;cursor:pointer;color:var(--text2);font-size:13px;transition:background .1s,color .1s;border-left:3px solid transparent}
 .ni:hover{background:var(--surface2);color:var(--text)}.ni.active{background:var(--surface2);color:#fff;border-left-color:var(--red)}
@@ -237,6 +235,10 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
           <div>Last sync: <span class="siv" id="last-sync-time">Never</span></div>
           <div>Changes: <span class="siv" id="last-sync-changes">—</span></div>
         </div>
+        <label style="display:flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;color:var(--text3);cursor:pointer;user-select:none">
+          <input type="checkbox" id="skip-tour-chk" onchange="localStorage[this.checked?'setItem':'removeItem']('cs_kb_toured','1')" style="accent-color:var(--red);cursor:pointer" />
+          Skip tutorial on load
+        </label>
       </div>
     </div>
     <div id="main">
@@ -258,7 +260,6 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
       </div>
       <div id="grid"></div>
     </div>
-    <div id="aip-resize-handle"></div>
     <div id="aip">
       <button id="ait" onclick="toggleAI()"><span>🤖</span><span class="lbl">AI Assistant</span></button>
       <div class="aihd"><span class="aidot"></span>AI Assistant<span style="font-size:11px;color:var(--text3);margin-left:auto" id="ai-ctx-lbl"></span></div>
@@ -642,32 +643,6 @@ function toggleSidebar(){
   btn.style.left=sidebarOpen?'196px':'0';
 }
 
-// ── AI PANEL RESIZE ────────────────────────────────────────
-(function(){
-  const handle=document.getElementById('aip-resize-handle');
-  const aip=document.getElementById('aip');
-  let dragging=false,startX=0,startW=0;
-  handle.addEventListener('mousedown',e=>{
-    dragging=true;startX=e.clientX;startW=aip.offsetWidth;
-    handle.classList.add('dragging');
-    document.body.style.cursor='col-resize';
-    document.body.style.userSelect='none';
-    e.preventDefault();
-  });
-  document.addEventListener('mousemove',e=>{
-    if(!dragging)return;
-    const delta=startX-e.clientX; // dragging left border leftward increases width
-    const newW=Math.min(600,Math.max(220,startW+delta));
-    aip.style.width=newW+'px';
-  });
-  document.addEventListener('mouseup',()=>{
-    if(!dragging)return;
-    dragging=false;
-    handle.classList.remove('dragging');
-    document.body.style.cursor='';
-    document.body.style.userSelect='';
-  });
-})();
 
 // ── TOUR ───────────────────────────────────────────────────
 function startTour(){
@@ -731,7 +706,6 @@ function startTour(){
   }
 
   function endTour(){
-    localStorage.setItem('cs_kb_toured','1');
     clearHighlight();
     overlay.remove();
     card.remove();
@@ -1010,6 +984,7 @@ function autoGrowInput(){
 document.getElementById('aii').addEventListener('input',autoGrowInput);
 // Pin #main at its natural width so sidebar open/close only affects #aip
 requestAnimationFrame(()=>{const m=document.getElementById('main');m.style.width=m.offsetWidth+'px';});
+document.getElementById('skip-tour-chk').checked=!!localStorage.getItem('cs_kb_toured');
 
 function openFbModal(fbId){
   const row=document.getElementById(fbId+'_up')?.closest('.feedback-row');
