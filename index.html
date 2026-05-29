@@ -616,8 +616,121 @@ function submitAgentName(){
   if(!val){inp.style.borderColor='var(--red,#e74c3c)';inp.classList.add('shake');setTimeout(()=>inp.classList.remove('shake'),400);return;}
   agentName=val;
   document.getElementById('name-modal-overlay').remove();
+  if(!localStorage.getItem('cs_kb_toured'))startTour();
 }
 document.getElementById('name-modal-input').addEventListener('keydown',e=>{if(e.key==='Enter')submitAgentName();});
+
+function startTour(){
+  const steps=[
+    {
+      target:null,
+      title:'Welcome to CSHelper',
+      body:'This knowledgebase is backed by real documents from SharePoint across DiabloSport, Edge, Superchips, and Range. Try scenarios you deal with daily — installs, error codes, product questions. The more you use it, the more useful it gets.',
+      next:'Next'
+    },
+    {
+      target:'#sw',
+      title:'Search the Knowledgebase',
+      body:'Search by product name, part number, keyword, or doc type. Results appear live as you type — no need to press Enter.',
+      next:'Next'
+    },
+    {
+      target:'#aip',
+      title:'Ask the AI Assistant',
+      body:'The AI panel is a trained assistant with context across all brands. Ask questions in plain language, ask it to walk through a procedure step by step, or ask it about a specific document.',
+      next:'Next'
+    },
+    {
+      target:'#aip',
+      title:'Your Feedback Matters',
+      body:'During the testing period, feedback is critical. After any AI response you\'ll see 👍 and 👎 buttons — thumbs up confirms it worked, thumbs down requires a short note explaining what was wrong or missing. This directly improves the tool.',
+      next:'Finish'
+    }
+  ];
+  let step=0;
+
+  const overlay=document.createElement('div');
+  overlay.id='tour-overlay';
+  overlay.style.cssText='position:fixed;inset:0;z-index:250;pointer-events:none';
+
+  const backdrop=document.createElement('div');
+  backdrop.style.cssText='position:absolute;inset:0;background:rgba(0,0,0,.65);transition:clip-path .3s';
+
+  const card=document.createElement('div');
+  card.style.cssText='position:absolute;background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius,8px);padding:24px 22px 20px;width:min(360px,88vw);box-shadow:0 8px 32px rgba(0,0,0,.5);pointer-events:all;transition:top .3s,left .3s';
+
+  overlay.appendChild(backdrop);
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+
+  function endTour(){
+    localStorage.setItem('cs_kb_toured','1');
+    overlay.remove();
+    document.querySelectorAll('.tour-highlight').forEach(el=>{el.style.position='';el.style.zIndex='';el.classList.remove('tour-highlight');});
+  }
+
+  function renderStep(){
+    const s=steps[step];
+
+    // clear previous highlight
+    document.querySelectorAll('.tour-highlight').forEach(el=>{el.style.position='';el.style.zIndex='';el.classList.remove('tour-highlight');});
+
+    // highlight target
+    let rect=null;
+    if(s.target){
+      const el=document.querySelector(s.target);
+      if(el){
+        el.classList.add('tour-highlight');
+        const cs=getComputedStyle(el);
+        if(cs.position==='static')el.style.position='relative';
+        el.style.zIndex='252';
+        rect=el.getBoundingClientRect();
+      }
+    }
+
+    // backdrop with hole
+    if(rect){
+      const pad=8;
+      const t=rect.top-pad,l=rect.left-pad,b=rect.bottom+pad,r=rect.right+pad;
+      backdrop.style.clipPath=`polygon(0% 0%,100% 0%,100% 100%,0% 100%,0% ${t}px,${l}px ${t}px,${l}px ${b}px,${r}px ${b}px,${r}px ${t}px,0% ${t}px)`;
+    } else {
+      backdrop.style.clipPath='none';
+    }
+
+    // position card
+    const vw=window.innerWidth,vh=window.innerHeight;
+    if(!rect){
+      card.style.top='50%';card.style.left='50%';card.style.transform='translate(-50%,-50%)';
+    } else {
+      card.style.transform='none';
+      const cardW=Math.min(360,vw*0.88),cardH=220,pad2=16;
+      let top=rect.bottom+pad2+8;
+      let left=rect.left;
+      if(top+cardH>vh-pad2)top=rect.top-cardH-pad2-8;
+      if(top<pad2)top=pad2;
+      if(left+cardW>vw-pad2)left=vw-cardW-pad2;
+      if(left<pad2)left=pad2;
+      card.style.top=top+'px';card.style.left=left+'px';
+    }
+
+    card.innerHTML=`
+      <div style="font-size:11px;color:var(--text3);margin-bottom:6px;letter-spacing:.05em">STEP ${step+1} OF ${steps.length}</div>
+      <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px">${s.title}</div>
+      <div style="font-size:13px;color:var(--text2,var(--text3));line-height:1.55;margin-bottom:18px">${s.body}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span id="tour-skip" style="font-size:12px;color:var(--text3);cursor:pointer;text-decoration:underline;pointer-events:all">Skip Tour</span>
+        <button id="tour-next" style="background:var(--red,#e74c3c);border:none;border-radius:4px;color:#fff;padding:8px 20px;cursor:pointer;font-size:13px;font-weight:600;pointer-events:all">${s.next}</button>
+      </div>`;
+
+    document.getElementById('tour-skip').addEventListener('click',endTour);
+    document.getElementById('tour-next').addEventListener('click',()=>{
+      if(step<steps.length-1){step++;renderStep();}
+      else{endTour();}
+    });
+  }
+
+  renderStep();
+}
 let allDocs=[...SEED_DOCS],activeBrand='all',aiCtx=null,aiOpen=true,activeDoc=null,currentRole='agent';
 let deltaTokens={},lastSyncMeta={};
 const analytics={queries:[],docViews:[],sessionStart:new Date()};
