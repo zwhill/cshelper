@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/png" href="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAgACADASIAAhEBAxEB/8QAGgABAAIDAQAAAAAAAAAAAAAABwUGAQMECP/EACwQAAEDAwMDAwMFAQAAAAAAAAECAwQFBhEAEiEHE0EUIjFRYXEVUoGRwqH/xAAYAQACAwAAAAAAAAAAAAAAAAEDAgUH/8QAJhEAAQMDBAIBBQAAAAAAAAAAAgEDBAURBiExQRITIjJRYYHR/9oADAMBAAIRAxEAPwDyNbsaNMuCnQ5vd9K/KaaeGygF7FALbSQQDgkjjkAjjyNHdj x/VXbTGskbXw5wP2e7/OnmIuMkvtTGFvxpMV+K6htwIXtdaW2SlRABSAvIyCMgcarpj6m3EgHA7rRtIWCNcbdIdda81gkJ3xv45xyOyOaIul9u0GvpqX60ipKUwWuz6SShoYVv3btza8/CcYx5+fE9dds9MaBTFOypV0JnvxpKYUVl+M/h9KUlpx4lKFIa3EggJUVe7BSUYVm9OYUCIK2YCHUtJqTjDZdc3rLSMbAogAE+48hIzn41Suq0tUi73GVIQkRWUNJKc5UCN+T98rI/AGpNvLXJKQdhSJ9oiQdNtyFtj5lKxnJPaj98cDFZ6Txg/dqXScenYW4PvnCP9au3UG55FvNREw2WXHpClEl3JCUpx4BBySRznwf4NLWr8i35TsmNHYdW6jYe5ngZzxgj6DW67rmkXGqN34kdgR920t5Kltockn49vHHk/Oi5HU4+FKHrS7bqNm3WBcZhZS+VZ2H5HfH0ikvpuVOWozKcCO5JdddcUlIG5RWQSceeP6xotvOQ9JuupuPr3LTJW2DgD2oO1I4+gSBqZol+zaXS2oCKfFWhlG1CsqBz9Tzz/wA1T9GOopDq1q74pGob5GmWyJEYUSUD25G4AH7yc7/2v//Z">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSHelper 1.1.1</title>
+<title>CSHelper 1.1.2</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -184,34 +184,18 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 
 /* ── MOBILE ─────────────────────────────────────────────────── */
 @media (max-width:768px){
-  #sidebar,#sidebar-toggle,#aip-left-border,#nav-tabs,#sync-wrap,#user-chip{display:none!important}
-  /* full-height column layout: body fills 100dvh, topbar is 50px fixed, tab bar is fixed at bottom */
-  body{height:100dvh;overflow:hidden}
-  #app{height:calc(100dvh - 50px);overflow:hidden}
-  #view-kb{flex-direction:column;height:100%;overflow:hidden}
-  #main{flex:1;overflow-y:auto;width:100%;min-width:0;padding-bottom:calc(52px + env(safe-area-inset-bottom))}
-  #aip{display:none;width:100%!important;flex-shrink:0;flex-grow:1;flex:1;min-height:0;padding-bottom:calc(52px + env(safe-area-inset-bottom))}
-  #aip.mobile-visible{display:flex}
-  #topbar{gap:8px;padding:0 12px}
-  #sw{max-width:none}
-  #bbar{display:none}
-  /* mobile brand grid */
-  #mobile-bbar{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px 10px}
-  .mbt{min-height:72px;background:var(--surface);border:2px solid var(--border);border-radius:var(--rsm);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:12px 8px;transition:border-color .15s,background .15s;-webkit-tap-highlight-color:transparent}
-  .mbt.sel{border-color:var(--red);background:#2a1215}
-  .mbt .mbt-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-  .mbt .mbt-name{font-size:12px;font-weight:600;color:var(--text2);text-align:center;line-height:1.2}
-  .mbt .mbt-cnt{font-size:11px;color:var(--text3)}
-  /* mobile info panel */
-  #mobile-info{display:none;overflow-y:auto;padding:16px;flex:1}
-  #mobile-info.mobile-visible{display:block}
-  /* mobile tab bar — fixed, dark, safe-area aware */
-  #mobile-tabs{position:fixed;bottom:0;left:0;right:0;height:52px;padding-bottom:env(safe-area-inset-bottom);background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:stretch;z-index:100;box-sizing:content-box}
-  .mtab{flex:1;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;border-top:2px solid transparent;background:var(--surface);color:var(--text3);font-size:11px;font-weight:600;letter-spacing:.02em;transition:color .15s,border-color .15s;-webkit-tap-highlight-color:transparent;padding:0;margin:0}
-  .mtab.active{color:#fff;border-top-color:var(--red)}
+  body{overflow:hidden;height:100dvh;display:flex;flex-direction:column}
+  #app{flex:1;display:flex;flex-direction:column;overflow:hidden}
+  #view-kb{flex:1;display:flex;flex-direction:column;overflow:hidden;position:static}
+  #topbar{height:36px;padding:0 12px;flex-shrink:0}
+  #main{flex:1;overflow-y:auto;padding:10px;min-width:0;padding-bottom:calc(48px + env(safe-area-inset-bottom))}
+  #sidebar,#sidebar-toggle,#aip-left-border,#aip{display:none!important}
+  #nav-tabs,#sync-wrap,#user-chip{display:none!important}
+  #sw{display:none!important}
+  #bbar{display:none!important}
 }
 @media (min-width:769px){
-  #mobile-bbar,#mobile-info,#mobile-tabs{display:none!important}
+  #m-tabs,#m-info-panel,#m-brand-grid,#m-search-btn{display:none!important}
 }
 </style>
 </head>
@@ -291,47 +275,6 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
       </div>
       <div id="grid"></div>
     </div>
-    <!-- mobile brand grid (hidden on desktop) -->
-    <div id="mobile-bbar">
-      <div class="mbt sel" onclick="switchMobileTabBrand('all',this)" data-brand="all">
-        <span class="mbt-dot" style="background:var(--red)"></span>
-        <span class="mbt-name">All</span>
-        <span class="mbt-cnt nb" id="mcnt-all"></span>
-      </div>
-      <div class="mbt" onclick="switchMobileTabBrand('DiabloSport',this)" data-brand="DiabloSport">
-        <span class="mbt-dot" style="background:var(--ds)"></span>
-        <span class="mbt-name">DiabloSport</span>
-        <span class="mbt-cnt nb" id="mcnt-DiabloSport"></span>
-      </div>
-      <div class="mbt" onclick="switchMobileTabBrand('Edge',this)" data-brand="Edge">
-        <span class="mbt-dot" style="background:var(--edge)"></span>
-        <span class="mbt-name">Edge</span>
-        <span class="mbt-cnt nb" id="mcnt-Edge"></span>
-      </div>
-      <div class="mbt" onclick="switchMobileTabBrand('Superchips',this)" data-brand="Superchips">
-        <span class="mbt-dot" style="background:var(--sc)"></span>
-        <span class="mbt-name">Superchips</span>
-        <span class="mbt-cnt nb" id="mcnt-Superchips"></span>
-      </div>
-      <div class="mbt" onclick="switchMobileTabBrand('Range',this)" data-brand="Range">
-        <span class="mbt-dot" style="background:var(--range)"></span>
-        <span class="mbt-name">Range</span>
-        <span class="mbt-cnt nb" id="mcnt-Range"></span>
-      </div>
-      <div class="mbt" onclick="switchMobileTabBrand('Training',this)" data-brand="Training">
-        <span class="mbt-dot" style="background:var(--train)"></span>
-        <span class="mbt-name">Training</span>
-        <span class="mbt-cnt nb" id="mcnt-Training"></span>
-      </div>
-    </div>
-    <!-- mobile info panel (hidden on desktop) -->
-    <div id="mobile-info"></div>
-    <!-- mobile bottom tab bar (hidden on desktop) -->
-    <div id="mobile-tabs">
-      <button class="mtab active" id="mtab-docs" onclick="switchMobileTab('docs')">Docs</button>
-      <button class="mtab" id="mtab-ai" onclick="switchMobileTab('ai')">AI</button>
-      <button class="mtab" id="mtab-info" onclick="switchMobileTab('info')">Info</button>
-    </div>
     <div id="aip-left-border"></div>
     <div id="aip">
       <div class="aihd" style="padding:10px 13px 9px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--text2);text-transform:uppercase;flex-shrink:0">AI Assistant</div>
@@ -398,7 +341,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────
-const VERSION = '1.1.1';
+const VERSION = '1.1.2';
 const ADMIN_PASSWORD = 'holley2025'; // Change before deploying
 const DRIVE_ID = 'b!EfZxkrs-dEGVFhCFYOUKwmSNQKpiLb5MpRWvv3Vv30zqJE9Ptb93TYuxqw9XdR20';
 const FOLDER_IDS = {
@@ -711,94 +654,6 @@ function submitAgentName(){
 }
 document.getElementById('name-modal-input').addEventListener('keydown',e=>{if(e.key==='Enter')submitAgentName();});
 
-// On mobile, skip the name modal — Info tab handles it
-if(isMobile()){
-  document.getElementById('name-modal-overlay').style.display='none';
-}
-
-// ── MOBILE TABS ────────────────────────────────────────────
-let mobileTab='docs';
-function switchMobileTab(tab){
-  mobileTab=tab;
-  // update tab button active states
-  ['docs','ai','info'].forEach(t=>{
-    document.getElementById('mtab-'+t).classList.toggle('active',t===tab);
-  });
-  // show/hide panels
-  const main=document.getElementById('main');
-  const mobileBbar=document.getElementById('mobile-bbar');
-  const mobileInfo=document.getElementById('mobile-info');
-  const aip=document.getElementById('aip');
-  if(tab==='docs'){
-    main.style.display='';
-    mobileBbar.style.display='';
-    mobileInfo.classList.remove('mobile-visible');
-    aip.classList.remove('mobile-visible');
-  } else if(tab==='ai'){
-    main.style.display='none';
-    mobileBbar.style.display='none';
-    mobileInfo.classList.remove('mobile-visible');
-    aip.classList.add('mobile-visible');
-  } else if(tab==='info'){
-    main.style.display='none';
-    mobileBbar.style.display='none';
-    aip.classList.remove('mobile-visible');
-    mobileInfo.classList.add('mobile-visible');
-    renderMobileInfo();
-  }
-}
-
-function renderMobileInfo(){
-  const panel=document.getElementById('mobile-info');
-  if(!agentName){
-    panel.innerHTML=`
-      <div style="margin-bottom:16px;font-size:15px;font-weight:700;color:var(--text)">Welcome to CSHelper</div>
-      <div style="font-size:13px;color:var(--text3);margin-bottom:12px">Enter your name to get started.</div>
-      <input id="mobile-name-input" type="text" placeholder="Your name" style="width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:4px;color:var(--text);font-size:14px;font-family:inherit;padding:9px 11px;outline:none;margin-bottom:10px;box-sizing:border-box" />
-      <button onclick="submitMobileName()" style="width:100%;background:var(--red);border:none;border-radius:4px;color:#fff;padding:10px;cursor:pointer;font-size:14px;font-weight:600">Get Started</button>`;
-    const minp=document.getElementById('mobile-name-input');
-    if(minp)minp.addEventListener('keydown',e=>{if(e.key==='Enter')submitMobileName();});
-  } else {
-    const lbl={DiabloSport:'DiabloSport',Edge:'Edge Products',Superchips:'Superchips',Range:'Range Technology',Training:'Policies & Training'};
-    const brandCounts=Object.keys(BRANDS).map(b=>`<li style="padding:4px 0;font-size:13px;color:var(--text2)">${lbl[b]||b}: <strong>${allDocs.filter(d=>d.brand===b).length}</strong></li>`).join('');
-    const syncTime=lastSyncMeta.time?new Date(lastSyncMeta.time).toLocaleString():'Never';
-    panel.innerHTML=`
-      <div style="margin-bottom:16px">
-        <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:4px">${esc(agentName)}</div>
-        <span class="role-badge ${currentRole==='admin'?'role-admin':'role-agent'}">${currentRole==='admin'?'Admin':'Agent'}</span>
-      </div>
-      <div style="margin-bottom:14px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Documents by Brand</div>
-        <ul style="list-style:none;margin:0;padding:0">
-          <li style="padding:4px 0;font-size:13px;color:var(--text2)">All: <strong>${allDocs.length}</strong></li>
-          ${brandCounts}
-        </ul>
-      </div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:8px">Last sync: <span style="color:var(--text)">${syncTime}</span></div>
-      <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Version: <span style="color:var(--text)">v${VERSION}</span></div>
-      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text3);cursor:pointer;user-select:none">
-        <input type="checkbox" id="mobile-skip-tour-chk" onchange="localStorage[this.checked?'setItem':'removeItem']('cs_kb_toured','1')" style="accent-color:var(--red);cursor:pointer" ${localStorage.getItem('cs_kb_toured')?'checked':''}/>
-        Skip tutorial on load
-      </label>`;
-  }
-}
-
-function submitMobileName(){
-  const inp=document.getElementById('mobile-name-input');
-  if(!inp)return;
-  const val=inp.value.trim();
-  if(!val){inp.style.borderColor='var(--red)';return;}
-  agentName=val;
-  document.getElementById('user-name').textContent=val;
-  renderMobileInfo();
-}
-
-function switchMobileTabBrand(brand,el){
-  document.querySelectorAll('#mobile-bbar .mbt').forEach(t=>t.classList.remove('sel'));
-  el.classList.add('sel');
-  filterBrand(brand);
-}
-
 // ── SIDEBAR TOGGLE ─────────────────────────────────────────
 // #sidebar: flex-shrink:0, width controlled by .open class (CSS transition)
 // #main:    flex:1 1 0  — absorbs all space not taken by sidebar or aip
@@ -1103,7 +958,7 @@ function updateCounts(){
     const cnt=b==='all'?allDocs.length:allDocs.filter(d=>d.brand===b).length;
     const el=document.getElementById('cnt-'+b);
     if(el)el.textContent=cnt;
-    const mel=document.getElementById('mcnt-'+b);
+    const mel=document.getElementById('m-cnt-'+b);
     if(mel)mel.textContent=cnt;
   });
   document.getElementById('s-total').textContent=allDocs.length;
@@ -1507,12 +1362,190 @@ function checkForUpdate(){
 checkForUpdate();
 setInterval(checkForUpdate,60000);
 
+// ── MOBILE INIT ────────────────────────────────────────────
+function initMobile(){
+  // suppress desktop name modal
+  const overlay=document.getElementById('name-modal-overlay');
+  if(overlay)overlay.style.display='none';
+
+  // inject search button into topbar after logo
+  const logo=document.querySelector('#topbar .logo');
+  const mSearchBtn=document.createElement('div');
+  mSearchBtn.id='m-search-btn';
+  mSearchBtn.style.cssText='width:28px;height:28px;background:#1a1a1a;border:1px solid #252525;border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-left:auto;color:#555;font-size:16px;user-select:none';
+  mSearchBtn.textContent='⌕';
+  mSearchBtn.addEventListener('click',openMobileSearch);
+  logo.parentNode.insertBefore(mSearchBtn,logo.nextSibling);
+
+  // inject brand grid at top of #main
+  const main=document.getElementById('main');
+  const grid=document.createElement('div');
+  grid.id='m-brand-grid';
+  grid.style.cssText='display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:10px;';
+  const brandDefs=[
+    {key:'all',label:'All',color:'#C8102E'},
+    {key:'DiabloSport',label:'DiabloSport',color:'#E8201A'},
+    {key:'Edge',label:'Edge',color:'#003087'},
+    {key:'Superchips',label:'Superchips',color:'#FF6600'},
+    {key:'Range',label:'Range',color:'#888'},
+    {key:'Training',label:'Training',color:'#7c5cbf'},
+  ];
+  brandDefs.forEach(({key,label,color})=>{
+    const cell=document.createElement('div');
+    cell.dataset.brand=key;
+    cell.style.cssText='background:#151515;border:1.5px solid #222;border-radius:7px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:66px;cursor:pointer;-webkit-tap-highlight-color:transparent';
+    cell.innerHTML=`<div style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0"></div><div style="font-size:10px;font-weight:600;color:#888;text-align:center;line-height:1.2">${label}</div><div id="m-cnt-${key}" style="font-size:10px;color:#3a3a3a;font-weight:600">0</div>`;
+    cell.addEventListener('click',()=>{
+      document.querySelectorAll('#m-brand-grid [data-brand]').forEach(c=>{
+        c.style.borderColor='#222';c.style.background='#151515';
+        c.querySelector('div:nth-child(2)').style.color='#888';
+        c.querySelector('div:nth-child(3)').style.color='#3a3a3a';
+      });
+      cell.style.borderColor='#C8102E';cell.style.background='#1a0d0f';
+      cell.querySelector('div:nth-child(2)').style.color='#fff';
+      cell.querySelector('div:nth-child(3)').style.color='#C8102E';
+      filterBrand(key==='all'?'all':key);
+    });
+    grid.appendChild(cell);
+  });
+  // mark All active by default
+  grid.querySelector('[data-brand="all"]').style.borderColor='#C8102E';
+  grid.querySelector('[data-brand="all"]').style.background='#1a0d0f';
+  grid.querySelector('[data-brand="all"] div:nth-child(2)').style.color='#fff';
+  grid.querySelector('[data-brand="all"] div:nth-child(3)').style.color='#C8102E';
+  main.prepend(grid);
+
+  // inject info panel as sibling of #main inside #view-kb
+  const viewKb=document.getElementById('view-kb');
+  const infoPanel=document.createElement('div');
+  infoPanel.id='m-info-panel';
+  infoPanel.style.cssText='display:none;flex:1;overflow-y:auto;padding:14px;background:#0f0f0f;';
+  viewKb.appendChild(infoPanel);
+
+  // inject tab bar as last child of body
+  const tabs=document.createElement('div');
+  tabs.id='m-tabs';
+  tabs.style.cssText='position:fixed;bottom:0;left:0;right:0;height:48px;padding-bottom:env(safe-area-inset-bottom);background:#111;border-top:1px solid #1e1e1e;display:block;z-index:100;';
+  tabs.innerHTML=`<div style="display:flex;height:48px;">
+    <div class="m-tab" data-tab="docs" style="flex:1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#C8102E;border-top:2px solid #C8102E;cursor:pointer;letter-spacing:.02em;background:#111">Docs</div>
+    <div class="m-tab" data-tab="ai" style="flex:1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#444;border-top:2px solid transparent;cursor:pointer;letter-spacing:.02em;background:#111">AI</div>
+    <div class="m-tab" data-tab="info" style="flex:1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#444;border-top:2px solid transparent;cursor:pointer;letter-spacing:.02em;background:#111">Info</div>
+  </div>`;
+  document.body.appendChild(tabs);
+  tabs.querySelectorAll('.m-tab').forEach(t=>t.addEventListener('click',()=>mSwitchTab(t.dataset.tab)));
+
+  // update counts in mobile grid
+  updateCounts();
+}
+
+let mActiveTab='docs';
+function mSwitchTab(tab){
+  mActiveTab=tab;
+  const main=document.getElementById('main');
+  const aip=document.getElementById('aip');
+  const infoPanel=document.getElementById('m-info-panel');
+  // hide all panels
+  main.style.display='none';
+  if(aip)aip.style.removeProperty('display'); // reset then hide via CSS
+  if(aip)aip.style.display='none';
+  infoPanel.style.display='none';
+  // show active
+  if(tab==='docs'){main.style.display='';}
+  else if(tab==='ai'){if(aip){aip.style.cssText='display:flex!important;flex:1;flex-direction:column;width:100%!important;min-height:0;';}}
+  else if(tab==='info'){infoPanel.style.display='block';mRenderInfo();}
+  // update tab active styles
+  document.querySelectorAll('#m-tabs .m-tab').forEach(t=>{
+    const active=t.dataset.tab===tab;
+    t.style.color=active?'#C8102E':'#444';
+    t.style.borderTopColor=active?'#C8102E':'transparent';
+  });
+}
+
+function mRenderInfo(){
+  const panel=document.getElementById('m-info-panel');
+  if(!panel)return;
+  const SL='font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#2e2e2e;margin:14px 0 6px;';
+  const ROW='display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #1a1a1a;';
+  const LL='font-size:11px;color:#555;';
+  const RV='font-size:11px;font-weight:600;color:#ccc;display:flex;align-items:center;gap:6px;';
+  if(!agentName){
+    panel.innerHTML=`<div style="font-size:15px;font-weight:700;color:#eee;margin-bottom:12px">What's your name?</div>
+      <input id="m-name-input" type="text" placeholder="Your name" autocomplete="off"
+        style="width:100%;background:#1a1a1a;border:1px solid #333;border-radius:5px;padding:9px 11px;color:#eee;font-size:14px;font-family:inherit;outline:none;box-sizing:border-box;margin-bottom:10px" />
+      <button id="m-name-btn" style="width:100%;background:#C8102E;border:none;border-radius:5px;color:#fff;padding:10px;cursor:pointer;font-size:14px;font-weight:600">Get Started</button>`;
+    const inp=document.getElementById('m-name-input');
+    const btn=document.getElementById('m-name-btn');
+    const submit=()=>{const v=inp.value.trim();if(!v){inp.style.borderColor='#C8102E';return;}agentName=v;document.getElementById('user-name').textContent=v;mRenderInfo();};
+    btn.addEventListener('click',submit);
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
+    inp.focus();
+    return;
+  }
+  const syncTime=lastSyncMeta.time?new Date(lastSyncMeta.time).toLocaleString():'Never';
+  const brandRows=['DiabloSport','Edge','Superchips','Range','Training'].map(b=>{
+    const color=BRANDS[b]?.color||'#888';
+    return `<div style="${ROW}"><span style="${LL}">${b}</span><span style="${RV}"><span style="width:7px;height:7px;border-radius:50%;background:${color};display:inline-block"></span>${allDocs.filter(d=>d.brand===b).length}</span></div>`;
+  }).join('');
+  panel.innerHTML=`
+    <div style="${SL}margin-top:0">Documents</div>
+    <div style="${ROW}"><span style="${LL}">Total</span><span style="${RV}">${allDocs.length}</span></div>
+    ${brandRows}
+    <div style="${SL}">System</div>
+    <div style="${ROW}"><span style="${LL}">Version</span><span style="${RV}">v${VERSION}</span></div>
+    <div style="${ROW}"><span style="${LL}">Last sync</span><span style="${RV}">${syncTime}</span></div>
+    <div style="${SL}">Settings</div>
+    <div style="${ROW}">
+      <span style="${LL}">Skip tutorial on load</span>
+      <input type="checkbox" id="m-skip-tour-chk" style="accent-color:#C8102E;cursor:pointer;width:16px;height:16px" ${localStorage.getItem('cs_kb_toured')?'checked':''}/>
+    </div>`;
+  document.getElementById('m-skip-tour-chk').addEventListener('change',function(){
+    localStorage[this.checked?'setItem':'removeItem']('cs_kb_toured','1');
+  });
+}
+
+function openMobileSearch(){
+  if(document.getElementById('m-search-overlay'))return;
+  const overlay=document.createElement('div');
+  overlay.id='m-search-overlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:200;display:flex;flex-direction:column;justify-content:flex-start;';
+  overlay.innerHTML=`
+    <div style="background:#111;border-bottom:1px solid #1e1e1e;padding:8px 10px;display:flex;align-items:center;gap:8px;">
+      <input id="m-search-input" type="text" placeholder="Search docs, part numbers…" autocomplete="off"
+        style="flex:1;background:#1a1a1a;border:1px solid #333;border-radius:5px;padding:7px 10px;color:#eee;font-size:13px;font-family:inherit;outline:none;" />
+      <span id="m-search-cancel" style="font-size:11px;font-weight:600;color:#C8102E;cursor:pointer;white-space:nowrap;padding:4px;">Cancel</span>
+    </div>
+    <div id="m-search-results" style="padding:8px 10px;display:flex;flex-direction:column;gap:5px;overflow-y:auto;"></div>`;
+  document.body.appendChild(overlay);
+  const inp=document.getElementById('m-search-input');
+  const results=document.getElementById('m-search-results');
+  const cancel=document.getElementById('m-search-cancel');
+  const close=()=>overlay.remove();
+  cancel.addEventListener('click',close);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)close();});
+  inp.addEventListener('input',()=>{
+    const q=inp.value.trim();
+    results.innerHTML='';
+    if(!q)return;
+    const ql=q.toLowerCase();
+    const hits=allDocs.filter(d=>d.name.toLowerCase().includes(ql)||(d.snippet||'').toLowerCase().includes(ql)).slice(0,12);
+    hits.forEach(doc=>{
+      const row=document.createElement('div');
+      row.style.cssText='padding:9px 10px;border-radius:6px;background:#141414;border:1px solid #1e1e1e;cursor:pointer;';
+      row.innerHTML=`<div style="font-size:12px;color:#e0e0e0;font-weight:500;">${esc(doc.name.replace(/\.pdf$/i,''))}</div><div style="font-size:10px;color:#3a3a3a;margin-top:2px;">${esc(doc.brand)} · ${esc(doc.type||'Doc')}</div>`;
+      row.addEventListener('click',()=>{close();openDoc(doc.id);});
+      results.appendChild(row);
+    });
+  });
+  inp.focus();
+}
+
 // ── INIT ───────────────────────────────────────────────────
 loadSyncState();
 updateSyncFooter();
 updateCounts();
 applyFilters();
-showBanner('info','CSHelper 1.1.1 loaded — 226 documents ready. Admin: click your name to unlock sync.');
+showBanner('info','CSHelper 1.1.2 loaded — 226 documents ready. Admin: click your name to unlock sync.');
+if(isMobile())initMobile();
 </script>
 <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
 </body>
