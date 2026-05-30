@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/png" href="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAgACADASIAAhEBAxEB/8QAGgABAAIDAQAAAAAAAAAAAAAABwUGAQMECP/EACwQAAEDAwMDAwMFAQAAAAAAAAECAwQFBhEAEiEHE0EUIjFRYXEVUoGRwqH/xAAYAQACAwAAAAAAAAAAAAAAAAEDAgUH/8QAJhEAAQMDBAIBBQAAAAAAAAAAAgEDBAURBiExQRITIjJRYYHR/9oADAMBAAIRAxEAPwDyNbsaNMuCnQ5vd9K/KaaeGygF7FALbSQQDgkjjkAjjyNHdj x/VXbTGskbXw5wP2e7/OnmIuMkvtTGFvxpMV+K6htwIXtdaW2SlRABSAvIyCMgcarpj6m3EgHA7rRtIWCNcbdIdda81gkJ3xv45xyOyOaIul9u0GvpqX60ipKUwWuz6SShoYVv3btza8/CcYx5+fE9dds9MaBTFOypV0JnvxpKYUVl+M/h9KUlpx4lKFIa3EggJUVe7BSUYVm9OYUCIK2YCHUtJqTjDZdc3rLSMbAogAE+48hIzn41Suq0tUi73GVIQkRWUNJKc5UCN+T98rI/AGpNvLXJKQdhSJ9oiQdNtyFtj5lKxnJPaj98cDFZ6Txg/dqXScenYW4PvnCP9au3UG55FvNREw2WXHpClEl3JCUpx4BBySRznwf4NLWr8i35TsmNHYdW6jYe5ngZzxgj6DW67rmkXGqN34kdgR920t5Kltockn49vHHk/Oi5HU4+FKHrS7bqNm3WBcZhZS+VZ2H5HfH0ikvpuVOWozKcCO5JdddcUlIG5RWQSceeP6xotvOQ9JuupuPr3LTJW2DgD2oO1I4+gSBqZol+zaXS2oCKfFWhlG1CsqBz9Tzz/wA1T9GOopDq1q74pGob5GmWyJEYUSUD25G4AH7yc7/2v//Z">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSHelper 1.1.0</title>
+<title>CSHelper 1.1.1</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -185,28 +185,30 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 /* ── MOBILE ─────────────────────────────────────────────────── */
 @media (max-width:768px){
   #sidebar,#sidebar-toggle,#aip-left-border,#nav-tabs,#sync-wrap,#user-chip{display:none!important}
-  #view-kb{flex-direction:column;padding-bottom:56px}
-  #aip{display:none;width:100%!important;flex-shrink:0;flex-grow:0}
+  /* full-height column layout: body fills 100dvh, topbar is 50px fixed, tab bar is fixed at bottom */
+  body{height:100dvh;overflow:hidden}
+  #app{height:calc(100dvh - 50px);overflow:hidden}
+  #view-kb{flex-direction:column;height:100%;overflow:hidden}
+  #main{flex:1;overflow-y:auto;width:100%;min-width:0;padding-bottom:calc(52px + env(safe-area-inset-bottom))}
+  #aip{display:none;width:100%!important;flex-shrink:0;flex-grow:1;flex:1;min-height:0;padding-bottom:calc(52px + env(safe-area-inset-bottom))}
   #aip.mobile-visible{display:flex}
-  #main{flex:1;overflow-y:auto;width:100%;min-width:0}
   #topbar{gap:8px;padding:0 12px}
   #sw{max-width:none}
   #bbar{display:none}
   /* mobile brand grid */
-  #mobile-bbar{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:10px 12px 0}
-  .mbt{min-height:80px;background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;padding:8px 4px;transition:border-color .15s,background .15s}
+  #mobile-bbar{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px 10px}
+  .mbt{min-height:72px;background:var(--surface);border:2px solid var(--border);border-radius:var(--rsm);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:12px 8px;transition:border-color .15s,background .15s;-webkit-tap-highlight-color:transparent}
   .mbt.sel{border-color:var(--red);background:#2a1215}
-  .mbt .mbt-dot{width:10px;height:10px;border-radius:50%}
-  .mbt .mbt-name{font-size:11px;font-weight:600;color:var(--text2);text-align:center;line-height:1.2}
-  .mbt .mbt-cnt{font-size:10px;color:var(--text3)}
+  .mbt .mbt-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .mbt .mbt-name{font-size:12px;font-weight:600;color:var(--text2);text-align:center;line-height:1.2}
+  .mbt .mbt-cnt{font-size:11px;color:var(--text3)}
   /* mobile info panel */
-  #mobile-info{display:none;flex:1;overflow-y:auto;padding:16px}
+  #mobile-info{display:none;overflow-y:auto;padding:16px;flex:1}
   #mobile-info.mobile-visible{display:block}
-  /* mobile tab bar */
-  #mobile-tabs{position:fixed;bottom:0;left:0;right:0;height:52px;background:var(--surface);border-top:1px solid var(--border);display:flex;z-index:100}
-  .mtab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;border:none;background:none;color:var(--text3);font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;transition:color .15s}
-  .mtab.active{color:var(--red)}
-  .mtab-icon{font-size:18px;line-height:1}
+  /* mobile tab bar — fixed, dark, safe-area aware */
+  #mobile-tabs{position:fixed;bottom:0;left:0;right:0;height:52px;padding-bottom:env(safe-area-inset-bottom);background:var(--surface);border-top:1px solid var(--border);display:flex;align-items:stretch;z-index:100;box-sizing:content-box}
+  .mtab{flex:1;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;border-top:2px solid transparent;background:var(--surface);color:var(--text3);font-size:11px;font-weight:600;letter-spacing:.02em;transition:color .15s,border-color .15s;-webkit-tap-highlight-color:transparent;padding:0;margin:0}
+  .mtab.active{color:#fff;border-top-color:var(--red)}
 }
 @media (min-width:769px){
   #mobile-bbar,#mobile-info,#mobile-tabs{display:none!important}
@@ -326,15 +328,9 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
     <div id="mobile-info"></div>
     <!-- mobile bottom tab bar (hidden on desktop) -->
     <div id="mobile-tabs">
-      <button class="mtab active" id="mtab-docs" onclick="switchMobileTab('docs')">
-        <span class="mtab-icon">📂</span>Docs
-      </button>
-      <button class="mtab" id="mtab-ai" onclick="switchMobileTab('ai')">
-        <span class="mtab-icon">🤖</span>AI
-      </button>
-      <button class="mtab" id="mtab-info" onclick="switchMobileTab('info')">
-        <span class="mtab-icon">ℹ️</span>Info
-      </button>
+      <button class="mtab active" id="mtab-docs" onclick="switchMobileTab('docs')">Docs</button>
+      <button class="mtab" id="mtab-ai" onclick="switchMobileTab('ai')">AI</button>
+      <button class="mtab" id="mtab-info" onclick="switchMobileTab('info')">Info</button>
     </div>
     <div id="aip-left-border"></div>
     <div id="aip">
@@ -402,7 +398,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────
-const VERSION = '1.1.0';
+const VERSION = '1.1.1';
 const ADMIN_PASSWORD = 'holley2025'; // Change before deploying
 const DRIVE_ID = 'b!EfZxkrs-dEGVFhCFYOUKwmSNQKpiLb5MpRWvv3Vv30zqJE9Ptb93TYuxqw9XdR20';
 const FOLDER_IDS = {
@@ -1516,7 +1512,7 @@ loadSyncState();
 updateSyncFooter();
 updateCounts();
 applyFilters();
-showBanner('info','CSHelper 1.1.0 loaded — 226 documents ready. Admin: click your name to unlock sync.');
+showBanner('info','CSHelper 1.1.1 loaded — 226 documents ready. Admin: click your name to unlock sync.');
 </script>
 <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
 </body>
