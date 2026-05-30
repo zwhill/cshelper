@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <link rel="icon" type="image/png" href="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAgACADASIAAhEBAxEB/8QAGgABAAIDAQAAAAAAAAAAAAAABwUGAQMECP/EACwQAAEDAwMDAwMFAQAAAAAAAAECAwQFBhEAEiEHE0EUIjFRYXEVUoGRwqH/xAAYAQACAwAAAAAAAAAAAAAAAAEDAgUH/8QAJhEAAQMDBAIBBQAAAAAAAAAAAgEDBAURBiExQRITIjJRYYHR/9oADAMBAAIRAxEAPwDyNbsaNMuCnQ5vd9K/KaaeGygF7FALbSQQDgkjjkAjjyNHdj x/VXbTGskbXw5wP2e7/OnmIuMkvtTGFvxpMV+K6htwIXtdaW2SlRABSAvIyCMgcarpj6m3EgHA7rRtIWCNcbdIdda81gkJ3xv45xyOyOaIul9u0GvpqX60ipKUwWuz6SShoYVv3btza8/CcYx5+fE9dds9MaBTFOypV0JnvxpKYUVl+M/h9KUlpx4lKFIa3EggJUVe7BSUYVm9OYUCIK2YCHUtJqTjDZdc3rLSMbAogAE+48hIzn41Suq0tUi73GVIQkRWUNJKc5UCN+T98rI/AGpNvLXJKQdhSJ9oiQdNtyFtj5lKxnJPaj98cDFZ6Txg/dqXScenYW4PvnCP9au3UG55FvNREw2WXHpClEl3JCUpx4BBySRznwf4NLWr8i35TsmNHYdW6jYe5ngZzxgj6DW67rmkXGqN34kdgR920t5Kltockn49vHHk/Oi5HU4+FKHrS7bqNm3WBcZhZS+VZ2H5HfH0ikvpuVOWozKcCO5JdddcUlIG5RWQSceeP6xotvOQ9JuupuPr3LTJW2DgD2oO1I4+gSBqZol+zaXS2oCKfFWhlG1CsqBz9Tzz/wA1T9GOopDq1q74pGob5GmWyJEYUSUD25G4AH7yc7/2v//Z">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSHelper 1.1.3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CSHelper 1.1.4</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -193,6 +193,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
   #nav-tabs,#sync-wrap,#user-chip{display:none!important}
   #sw{display:none!important}
   #bbar{display:none!important}
+  input,textarea,select{font-size:16px!important}
 }
 @media (min-width:769px){
   #m-tabs,#m-info-panel,#m-brand-grid,#m-search-btn{display:none!important}
@@ -341,7 +342,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────
-const VERSION = '1.1.3';
+const VERSION = '1.1.4';
 const ADMIN_PASSWORD = 'holley2025'; // Change before deploying
 const DRIVE_ID = 'b!EfZxkrs-dEGVFhCFYOUKwmSNQKpiLb5MpRWvv3Vv30zqJE9Ptb93TYuxqw9XdR20';
 const FOLDER_IDS = {
@@ -1452,13 +1453,44 @@ function mSwitchTab(tab){
   // show active
   if(tab==='docs'){main.style.display='';}
   else if(tab==='ai'){if(aip){aip.style.cssText='display:flex!important;flex-direction:column;width:100%!important;height:calc(100dvh - 36px - 48px);overflow:hidden;padding-bottom:0;';}}
-  else if(tab==='info'){infoPanel.style.display='block';mRenderInfo();}
+  else if(tab==='info'){
+    if(!agentName){showMobileNameModal();}
+    else{infoPanel.style.display='block';mRenderInfo();}
+  }
   // update tab active styles
   document.querySelectorAll('#m-tabs .m-tab').forEach(t=>{
     const active=t.dataset.tab===tab;
     t.style.color=active?'#C8102E':'#444';
     t.style.borderTopColor=active?'#C8102E':'transparent';
   });
+}
+
+function showMobileNameModal(){
+  if(document.getElementById('m-name-modal'))return;
+  const modal=document.createElement('div');
+  modal.id='m-name-modal';
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:300;display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML=`<div style="background:#1a1a1a;border:1px solid #2e2e2e;border-radius:10px;padding:24px 20px;width:min(300px,85vw);display:flex;flex-direction:column;gap:14px;">
+    <div style="font-size:14px;font-weight:700;color:#fff;">What's your name?</div>
+    <input id="m-name-input" type="text" placeholder="Your name" autocomplete="given-name"
+      style="background:#111;border:1px solid #333;border-radius:6px;padding:10px 12px;color:#eee;font-size:16px;font-family:inherit;outline:none;width:100%;" />
+    <button id="m-name-submit" style="background:#C8102E;border:none;border-radius:6px;padding:11px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;width:100%;">Get Started</button>
+  </div>`;
+  document.body.appendChild(modal);
+  const inp=document.getElementById('m-name-input');
+  const btn=document.getElementById('m-name-submit');
+  const submit=()=>{
+    const v=inp.value.trim();
+    if(!v)return;
+    agentName=v;
+    document.getElementById('user-name').textContent=v;
+    modal.remove();
+    const infoPanel=document.getElementById('m-info-panel');
+    if(infoPanel){infoPanel.style.display='block';mRenderInfo();}
+  };
+  btn.addEventListener('click',submit);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
+  inp.focus();
 }
 
 function mRenderInfo(){
@@ -1468,23 +1500,6 @@ function mRenderInfo(){
   const ROW='display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #1a1a1a;';
   const LL='font-size:11px;color:#555;';
   const RV='font-size:11px;font-weight:600;color:#ccc;display:flex;align-items:center;gap:6px;';
-  if(!agentName){
-    panel.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #1a1a1a;">
-      <span style="font-size:11px;color:#555;">Your name</span>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <input id="m-name-input" type="text" placeholder="Enter name" autocomplete="off"
-          style="height:26px;width:110px;background:#1a1a1a;border:1px solid #2e2e2e;border-radius:4px;padding:0 8px;color:#eee;font-size:11px;font-family:inherit;outline:none;box-sizing:border-box;" />
-        <button id="m-name-btn" style="height:26px;padding:0 10px;font-size:11px;font-weight:600;background:#C8102E;border:none;border-radius:4px;color:#fff;cursor:pointer;">OK</button>
-      </div>
-    </div>`;
-    const inp=document.getElementById('m-name-input');
-    const btn=document.getElementById('m-name-btn');
-    const submit=()=>{const v=inp.value.trim();if(!v){inp.style.borderColor='#C8102E';return;}agentName=v;document.getElementById('user-name').textContent=v;mRenderInfo();};
-    btn.addEventListener('click',submit);
-    inp.addEventListener('keydown',e=>{if(e.key==='Enter')submit();});
-    inp.focus();
-    return;
-  }
   const syncTime=lastSyncMeta.time?new Date(lastSyncMeta.time).toLocaleString():'Never';
   const brandRows=['DiabloSport','Edge','Superchips','Range','Training'].map(b=>{
     const color=BRANDS[b]?.color||'#888';
@@ -1548,7 +1563,7 @@ loadSyncState();
 updateSyncFooter();
 updateCounts();
 applyFilters();
-showBanner('info','CSHelper 1.1.3 loaded — 226 documents ready. Admin: click your name to unlock sync.');
+showBanner('info','CSHelper 1.1.4 loaded — 226 documents ready. Admin: click your name to unlock sync.');
 if(isMobile())initMobile();
 </script>
 <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
