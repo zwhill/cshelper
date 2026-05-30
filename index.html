@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/png" href="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAgACADASIAAhEBAxEB/8QAGgABAAIDAQAAAAAAAAAAAAAABwUGAQMECP/EACwQAAEDAwMDAwMFAQAAAAAAAAECAwQFBhEAEiEHE0EUIjFRYXEVUoGRwqH/xAAYAQACAwAAAAAAAAAAAAAAAAEDAgUH/8QAJhEAAQMDBAIBBQAAAAAAAAAAAgEDBAURBiExQRITIjJRYYHR/9oADAMBAAIRAxEAPwDyNbsaNMuCnQ5vd9K/KaaeGygF7FALbSQQDgkjjkAjjyNHdj x/VXbTGskbXw5wP2e7/OnmIuMkvtTGFvxpMV+K6htwIXtdaW2SlRABSAvIyCMgcarpj6m3EgHA7rRtIWCNcbdIdda81gkJ3xv45xyOyOaIul9u0GvpqX60ipKUwWuz6SShoYVv3btza8/CcYx5+fE9dds9MaBTFOypV0JnvxpKYUVl+M/h9KUlpx4lKFIa3EggJUVe7BSUYVm9OYUCIK2YCHUtJqTjDZdc3rLSMbAogAE+48hIzn41Suq0tUi73GVIQkRWUNJKc5UCN+T98rI/AGpNvLXJKQdhSJ9oiQdNtyFtj5lKxnJPaj98cDFZ6Txg/dqXScenYW4PvnCP9au3UG55FvNREw2WXHpClEl3JCUpx4BBySRznwf4NLWr8i35TsmNHYdW6jYe5ngZzxgj6DW67rmkXGqN34kdgR920t5Kltockn49vHHk/Oi5HU4+FKHrS7bqNm3WBcZhZS+VZ2H5HfH0ikvpuVOWozKcCO5JdddcUlIG5RWQSceeP6xotvOQ9JuupuPr3LTJW2DgD2oO1I4+gSBqZol+zaXS2oCKfFWhlG1CsqBz9Tzz/wA1T9GOopDq1q74pGob5GmWyJEYUSUD25G4AH7yc7/2v//Z">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>CSHelper 1.1.4</title>
+<title>CSHelper 1.1.5</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -342,7 +342,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────
-const VERSION = '1.1.4';
+const VERSION = '1.1.5';
 const ADMIN_PASSWORD = 'holley2025'; // Change before deploying
 const DRIVE_ID = 'b!EfZxkrs-dEGVFhCFYOUKwmSNQKpiLb5MpRWvv3Vv30zqJE9Ptb93TYuxqw9XdR20';
 const FOLDER_IDS = {
@@ -1028,7 +1028,7 @@ function openDoc(id){
       ${activeDoc.modified?`<div><span style="color:var(--text2)">Modified:</span> ${new Date(activeDoc.modified).toLocaleDateString()}</div>`:''}
       ${activeDoc.live?'<div><span style="color:var(--green)">● Live from SharePoint</span></div>':''}
     </div>`;
-  document.getElementById('m-open').onclick=()=>window.open(activeDoc.url,'_blank');
+  document.getElementById('m-open').onclick=()=>window.open(activeDoc.url,'cshelper-doc');
   document.getElementById('m-ask').onclick=()=>{closeModal();askAbout(activeDoc);};
   document.getElementById('modal').classList.add('open');
   logDocView(activeDoc);
@@ -1563,7 +1563,7 @@ loadSyncState();
 updateSyncFooter();
 updateCounts();
 applyFilters();
-showBanner('info','CSHelper 1.1.4 loaded — 226 documents ready. Admin: click your name to unlock sync.');
+showBanner('info','CSHelper 1.1.5 loaded — 226 documents ready. Admin: click your name to unlock sync.');
 if(isMobile())initMobile();
 </script>
 <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
