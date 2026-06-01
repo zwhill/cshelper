@@ -87,7 +87,7 @@ Brand keys (`DiabloSport`, `Edge`, `Superchips`, `Range`, `Training`) are used a
 
 ## Current Version
 
-<!-- VERSION --> 1.2.3
+<!-- VERSION --> 1.2.4
 
 This line must stay in sync with `const VERSION` in `index.html` and `version.json` in the repo root. All three update together in every commit.
 
@@ -107,6 +107,7 @@ This line must stay in sync with `const VERSION` in `index.html` and `version.js
 - Mobile doc viewing uses `window.open()` to bypass Safari third-party cookie iframe block
 - Delta sync scaffolded — blocked on Azure AD
 - Citation pills in AI responses — inline `.cite-pill` elements after each AI reply, clicking opens SharePoint embed modal
+- Revision history card in console — versioned CHANGELOG constant, rendered on console open with tags and timeline dots
 
 ---
 
