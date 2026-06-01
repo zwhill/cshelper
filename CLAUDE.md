@@ -87,7 +87,7 @@ Brand keys (`DiabloSport`, `Edge`, `Superchips`, `Range`, `Training`) are used a
 
 ## Current Version
 
-<!-- VERSION --> 1.2.2
+<!-- VERSION --> 1.2.3
 
 This line must stay in sync with `const VERSION` in `index.html` and `version.json` in the repo root. All three update together in every commit.
 
@@ -106,12 +106,12 @@ This line must stay in sync with `const VERSION` in `index.html` and `version.js
 - Mobile layout: tab-based (Docs / AI / Info), 36px topbar, full-screen search overlay, 3x2 brand filter grid, fixed bottom tab bar
 - Mobile doc viewing uses `window.open()` to bypass Safari third-party cookie iframe block
 - Delta sync scaffolded — blocked on Azure AD
+- Citation pills in AI responses — inline `.cite-pill` elements after each AI reply, clicking opens SharePoint embed modal
 
 ---
 
 ## In Progress
 
-- **Citation pills in AI responses** — replace plain-text sources footer in `ask()` with inline `.cite-pill` elements that call `openDoc(id)` → existing SharePoint embed modal. Two changes: new `.cite-pill` CSS (add after `.ma a` rule), and rewrite of the sources block inside `ask()`. Not yet shipped.
 - **AI policy guardrails** — `AI_POLICY.md` + system prompt additions to explicitly block emissions defeat device support and non-compliant tuning scenarios
 - **Org API key** — cost case being built to move from personal Cloudflare secret to Holley-owned Anthropic billing account (~$200/mo cap to start)
 
