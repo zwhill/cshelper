@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/png" href="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAAgACADASIAAhEBAxEB/8QAGgABAAIDAQAAAAAAAAAAAAAABwUGAQMECP/EACwQAAEDAwMDAwMFAQAAAAAAAAECAwQFBhEAEiEHE0EUIjFRYXEVUoGRwqH/xAAYAQACAwAAAAAAAAAAAAAAAAEDAgUH/8QAJhEAAQMDBAIBBQAAAAAAAAAAAgEDBAURBiExQRITIjJRYYHR/9oADAMBAAIRAxEAPwDyNbsaNMuCnQ5vd9K/KaaeGygF7FALbSQQDgkjjkAjjyNHdj x/VXbTGskbXw5wP2e7/OnmIuMkvtTGFvxpMV+K6htwIXtdaW2SlRABSAvIyCMgcarpj6m3EgHA7rRtIWCNcbdIdda81gkJ3xv45xyOyOaIul9u0GvpqX60ipKUwWuz6SShoYVv3btza8/CcYx5+fE9dds9MaBTFOypV0JnvxpKYUVl+M/h9KUlpx4lKFIa3EggJUVe7BSUYVm9OYUCIK2YCHUtJqTjDZdc3rLSMbAogAE+48hIzn41Suq0tUi73GVIQkRWUNJKc5UCN+T98rI/AGpNvLXJKQdhSJ9oiQdNtyFtj5lKxnJPaj98cDFZ6Txg/dqXScenYW4PvnCP9au3UG55FvNREw2WXHpClEl3JCUpx4BBySRznwf4NLWr8i35TsmNHYdW6jYe5ngZzxgj6DW67rmkXGqN34kdgR920t5Kltockn49vHHk/Oi5HU4+FKHrS7bqNm3WBcZhZS+VZ2H5HfH0ikvpuVOWozKcCO5JdddcUlIG5RWQSceeP6xotvOQ9JuupuPr3LTJW2DgD2oO1I4+gSBqZol+zaXS2oCKfFWhlG1CsqBz9Tzz/wA1T9GOopDq1q74pGob5GmWyJEYUSUD25G4AH7yc7/2v//Z">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>CSHelper 1.1.6</title>
+<title>CSHelper 1.1.7</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -49,6 +49,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 #app{display:flex;flex:1;overflow:hidden}
 #view-kb{display:flex;flex:1;overflow:hidden}
 #view-console{display:none;flex:1;overflow-y:auto;padding:24px}
+#view-todo{display:none;flex:1;overflow-y:auto;padding:24px}
 #sidebar{width:0;background:var(--surface);border-right:1px solid var(--border);padding:10px 0;flex-shrink:0;overflow:hidden;display:flex;flex-direction:column;transition:width .2s}
 #sidebar.open{width:196px;overflow-y:auto}
 #main{flex:1 1 0;overflow-y:auto;padding:18px 20px;min-width:0}
@@ -70,16 +71,6 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .sc2{background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 14px;flex:1;min-width:0}
 .sc2 .sv{font-size:20px;font-weight:700;color:#fff}.sc2 .sl{font-size:11px;color:var(--text3);margin-top:1px}
 
-/* BRAND PILLS */
-#bbar{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap}
-.bp{padding:4px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:2px solid transparent;transition:all .15s;opacity:.7}
-.bp:hover{opacity:1}.bp.sel{opacity:1}
-.bp-all{background:#1e1e1e;border-color:#333;color:var(--text2)}.bp-all.sel{border-color:var(--red);color:#fff;background:#2a1215}
-.bp-ds{background:#2a0a09;color:#f87;border-color:#4a1a18}.bp-ds.sel{border-color:var(--ds);color:#fff;background:#3a1210}
-.bp-edge{background:#08101f;color:#89b;border-color:#1a2a4a}.bp-edge.sel{border-color:var(--edge);color:#fff;background:#0d1a38}
-.bp-sc{background:#1f1200;color:#fb8;border-color:#3a2200}.bp-sc.sel{border-color:var(--sc);color:#fff;background:#2e1800}
-.bp-range{background:#1c1c1c;color:#aaa;border-color:#333}.bp-range.sel{border-color:#888;color:#fff;background:#262626}
-.bp-train{background:#1a1230;color:#b9a;border-color:#2e2050}.bp-train.sel{border-color:var(--train);color:#fff;background:#231840}
 
 .shd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .shd h2{font-size:16px;font-weight:600;color:#fff}.shd .cnt{font-size:12px;color:var(--text3)}
@@ -220,6 +211,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
   <div id="nav-tabs">
     <div class="nav-tab active" id="tab-kb" onclick="switchTab('kb')">Knowledge Base</div>
     <div class="nav-tab console-tab" id="tab-console" onclick="switchTab('console')" style="display:none">⚙ Console</div>
+      <div class="nav-tab console-tab" id="tab-todo" onclick="switchTab('todo')" style="display:none">To Do</div>
   </div>
   <div id="sync-wrap">
     <span id="delta-status"></span>
@@ -266,14 +258,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
       </div>
       <div id="banner-area"></div>
       <div class="shd"><h2 id="stitle">All Documents</h2><span class="cnt" id="rcnt"></span></div>
-      <div id="bbar">
-        <div class="bp bp-all sel" onclick="filterBrand('all')">All</div>
-        <div class="bp bp-ds" onclick="filterBrand('DiabloSport')">DiabloSport</div>
-        <div class="bp bp-edge" onclick="filterBrand('Edge')">Edge</div>
-        <div class="bp bp-sc" onclick="filterBrand('Superchips')">Superchips</div>
-        <div class="bp bp-range" onclick="filterBrand('Range')">Range</div>
-        <div class="bp bp-train" onclick="filterBrand('Training')">Policies & Training</div>
-      </div>
+
       <div id="grid"></div>
     </div>
     <div id="aip-left-border"></div>
@@ -326,6 +311,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
       </table></div>
     </div>
   </div>
+  <div id="view-todo"></div>
 </div>
 
 <div id="modal">
@@ -342,7 +328,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────
-const VERSION = '1.1.6';
+const VERSION = '1.1.7';
 const ADMIN_PASSWORD = 'holley2025'; // Change before deploying
 const DRIVE_ID = 'b!EfZxkrs-dEGVFhCFYOUKwmSNQKpiLb5MpRWvv3Vv30zqJE9Ptb93TYuxqw9XdR20';
 const FOLDER_IDS = {
@@ -846,21 +832,25 @@ function applyRoleUI(){
   badge.className='role-badge '+(isAdmin?'role-admin':'role-agent');
   document.getElementById('sync-wrap').classList.toggle('visible',isAdmin);
   document.getElementById('tab-console').style.display=isAdmin?'':'none';
+  document.getElementById('tab-todo').style.display=isAdmin?'':'none';
   document.getElementById('user-chip').style.cursor=isAdmin?'default':'pointer';
-  if(!isAdmin&&activeTabId==='console')switchTab('kb');
+  if(!isAdmin&&(activeTabId==='console'||activeTabId==='todo'))switchTab('kb');
 }
 
 // ── TABS ───────────────────────────────────────────────────
 let activeTabId='kb';
 function switchTab(tab){
-  if(tab==='console'&&currentRole!=='admin')return;
+  if((tab==='console'||tab==='todo')&&currentRole!=='admin')return;
   activeTabId=tab;
   document.getElementById('view-kb').style.display=tab==='kb'?'flex':'none';
   document.getElementById('view-console').style.display=tab==='console'?'block':'none';
+  document.getElementById('view-todo').style.display=tab==='todo'?'block':'none';
   document.getElementById('sw').style.display=tab==='kb'?'':'none';
   document.getElementById('tab-kb').classList.toggle('active',tab==='kb');
   document.getElementById('tab-console').classList.toggle('active',tab==='console');
+  document.getElementById('tab-todo').classList.toggle('active',tab==='todo');
   if(tab==='console')refreshConsole();
+  if(tab==='todo')renderTodoTab();
 }
 
 // ── GRAPH AUTH ─────────────────────────────────────────────
@@ -973,14 +963,7 @@ function setView(el,view){
   const lbl={all:'All Documents',DiabloSport:'DiabloSport',Edge:'Edge Products',Superchips:'Superchips',Range:'Range Technology',Training:'Policies & Training'};
   document.getElementById('stitle').textContent=lbl[view]||view;
   if(view!=='all'){aiCtx=view;document.getElementById('ctx-b').textContent=lbl[view];document.getElementById('ai-ctx-lbl').textContent=view;}
-  syncBrandPills();applyFilters();
-}
-
-function filterBrand(b){activeBrand=b;syncBrandPills();applyFilters();}
-function syncBrandPills(){
-  document.querySelectorAll('.bp').forEach(p=>p.classList.remove('sel'));
-  const m={all:'.bp-all',DiabloSport:'.bp-ds',Edge:'.bp-edge',Superchips:'.bp-sc',Range:'.bp-range',Training:'.bp-train'};
-  document.querySelector(m[activeBrand])?.classList.add('sel');
+  applyFilters();
 }
 
 // ── SEARCH ─────────────────────────────────────────────────
@@ -1559,12 +1542,135 @@ function openMobileSearch(){
   inp.focus();
 }
 
+// ── TODO TAB ───────────────────────────────────────────────
+const TODO_KEY='cshelper-todos-v1';
+const TODO_SEED=[
+  {id:1,status:'done',text:'System prompt drafted — identity, scope, hard restrictions, escalation format, knowledge confidence'},
+  {id:2,status:'done',text:'Stress test scenario 1 validated — clean support question'},
+  {id:3,status:'inprogress',text:'Stress test remaining scenarios — emissions refusal, gray area deleted truck, competitor redirect'},
+  {id:4,status:'todo',text:'Finalize and lock system prompt'},
+  {id:5,status:'todo',text:'Worker keyword/pattern filter layer — Layer 2 guardrails'},
+  {id:6,status:'todo',text:'Implement prompt caching in the Worker'},
+  {id:7,status:'todo',text:'Move API key to environment secret — not hardcoded'},
+  {id:8,status:'todo',text:'Document Worker logic cleanly for handoff'},
+  {id:9,status:'todo',text:'Cost tracking — token counts and daily spend alongside Sheets data'},
+  {id:10,status:'todo',text:'Formal cost/value one-pager for IT'},
+  {id:11,status:'backlog',text:'Strategy lookup via database query instead of flat file injection'},
+  {id:12,status:'backlog',text:'Technical Wiki as injected context'},
+  {id:13,status:'backlog',text:'Azure AD integration'},
+  {id:14,status:'backlog',text:'Cloudflare to Azure migration'}
+];
+function loadTodos(){try{const d=localStorage.getItem(TODO_KEY);return d?JSON.parse(d):null;}catch{return null;}}
+function saveTodos(todos){try{localStorage.setItem(TODO_KEY,JSON.stringify(todos));}catch{}}
+function renderTodoTab(){
+  const el=document.getElementById('view-todo');
+  if(!el)return;
+  let todos=loadTodos();
+  if(!todos){todos=JSON.parse(JSON.stringify(TODO_SEED));saveTodos(todos);}
+  function getStats(){
+    return{
+      done:todos.filter(t=>t.status==='done').length,
+      inprogress:todos.filter(t=>t.status==='inprogress').length,
+      todo:todos.filter(t=>t.status==='todo').length,
+      backlog:todos.filter(t=>t.status==='backlog').length
+    };
+  }
+  function cycleStatus(id){
+    const t=todos.find(t=>t.id===id);
+    if(!t||t.status==='backlog')return;
+    t.status=t.status==='todo'?'inprogress':t.status==='inprogress'?'done':'todo';
+    saveTodos(todos);render();
+  }
+  function deleteItem(id){
+    todos=todos.filter(t=>t.id!==id);
+    saveTodos(todos);render();
+  }
+  function addItem(text){
+    const id=Date.now();
+    todos.push({id,status:'todo',text});
+    saveTodos(todos);render();
+  }
+  function statusCircle(status){
+    if(status==='done')return`<div style="width:18px;height:18px;border-radius:50%;background:#2ecc71;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer" title="Click to cycle"><svg width="10" height="8" viewBox="0 0 10 8"><polyline points="1,4 4,7 9,1" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
+    if(status==='inprogress')return`<div style="width:18px;height:18px;border-radius:50%;background:#378ADD;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer" title="Click to cycle"><div style="width:8px;height:2px;background:#fff;border-radius:1px"></div></div>`;
+    if(status==='backlog')return`<div style="width:18px;height:18px;border-radius:50%;border:2px solid #555;background:transparent;flex-shrink:0"></div>`;
+    return`<div style="width:18px;height:18px;border-radius:50%;border:2px solid #444;background:transparent;flex-shrink:0;cursor:pointer" title="Click to cycle"></div>`;
+  }
+  function statusBadge(status){
+    const s={
+      done:{bg:'#0d2a0d',color:'#2ecc71',border:'#1a5a1a',label:'Done'},
+      inprogress:{bg:'#0a1a2a',color:'#5af',border:'#1a3a5a',label:'In Progress'},
+      todo:{bg:'var(--surface2)',color:'var(--text2)',border:'var(--border2)',label:'To Do'},
+      backlog:{bg:'#1a1500',color:'var(--amber)',border:'#3a3000',label:'Backlog'}
+    }[status]||{};
+    return`<span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;background:${s.bg};color:${s.color};border:1px solid ${s.border};white-space:nowrap">${s.label}</span>`;
+  }
+  function itemRow(t){
+    const del=t.status!=='backlog'?`<button data-del="${t.id}" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;padding:0 4px;line-height:1;flex-shrink:0" title="Delete">✕</button>`:'';
+    return`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 13px;margin-bottom:6px;display:flex;gap:10px;align-items:center">
+      <div data-cycle="${t.id}">${statusCircle(t.status)}</div>
+      <div style="flex:1;font-size:13px;color:var(--text)">${esc(t.text)}</div>
+      ${statusBadge(t.status)}
+      ${del}
+    </div>`;
+  }
+  function section(label,items){
+    if(!items.length)return'';
+    return`<div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin:18px 0 8px">${label}</div>${items.map(itemRow).join('')}`;
+  }
+  function render(){
+    const s=getStats();
+    el.innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
+        <div>
+          <div style="font-size:16px;font-weight:600;color:#fff">CSHelper — POC To Do</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:3px">Items persist between sessions</div>
+        </div>
+        <span style="font-size:10px;font-weight:600;padding:3px 10px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text2)">POC mode</span>
+      </div>
+      <div style="display:flex;gap:10px;margin-bottom:20px">
+        ${['done','inprogress','todo','backlog'].map((k,i)=>{
+          const labels=['Done','In Progress','To Do','Backlog'];
+          const colors=['#2ecc71','#378ADD','#fff','var(--amber)'];
+          return`<div style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:10px 14px">
+            <div style="font-size:20px;font-weight:700;color:${colors[i]}">${s[k]}</div>
+            <div style="font-size:11px;color:var(--text3);margin-top:2px">${labels[i]}</div>
+          </div>`;
+        }).join('')}
+      </div>
+      ${section('✅ Done',todos.filter(t=>t.status==='done'))}
+      ${section('🔄 In Progress',todos.filter(t=>t.status==='inprogress'))}
+      ${section('📋 To Do',todos.filter(t=>t.status==='todo'))}
+      ${section('💡 Backlog — post handoff / IT owned',todos.filter(t=>t.status==='backlog'))}
+      <div style="display:flex;gap:8px;margin-top:20px">
+        <input id="todo-new-input" type="text" placeholder="Add a new item…"
+          style="flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:var(--rsm);padding:8px 12px;color:var(--text);font-size:13px;font-family:inherit;outline:none"/>
+        <button id="todo-add-btn" class="sync-btn" style="white-space:nowrap">Add</button>
+      </div>`;
+    el.querySelectorAll('[data-cycle]').forEach(d=>{
+      d.addEventListener('click',()=>cycleStatus(Number(d.dataset.cycle)));
+    });
+    el.querySelectorAll('[data-del]').forEach(d=>{
+      const id=Number(d.dataset.del);
+      d.addEventListener('mouseover',()=>{d.style.color='#e74c3c';});
+      d.addEventListener('mouseout',()=>{d.style.color='var(--text3)';});
+      d.addEventListener('click',()=>deleteItem(id));
+    });
+    const inp=el.querySelector('#todo-new-input');
+    const addBtn=el.querySelector('#todo-add-btn');
+    const doAdd=()=>{const v=inp.value.trim();if(!v)return;addItem(v);};
+    addBtn.addEventListener('click',doAdd);
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')doAdd();});
+  }
+  render();
+}
+
 // ── INIT ───────────────────────────────────────────────────
 loadSyncState();
 updateSyncFooter();
 updateCounts();
 applyFilters();
-showBanner('info','CSHelper 1.1.6 loaded — 226 documents ready. Admin: click your name to unlock sync.');
+showBanner('info','CSHelper 1.1.7 loaded — 226 documents ready. Admin: click your name to unlock sync.');
 if(isMobile())initMobile();
 </script>
 <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
