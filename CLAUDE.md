@@ -32,7 +32,7 @@ It is a **single self-contained file** — `index.html` (~1600+ lines) with all 
 | Hosting | Cloudflare Pages — `github.com/zwhill/cshelper` · local: `~/cshelper` |
 | Proxy | Cloudflare Worker — `cshelper-proxy.zwhill.workers.dev` (CORS proxy for Anthropic + GAS) |
 | AI | Anthropic API `claude-sonnet-4-20250514` — key stored as Cloudflare secret (not hardcoded) |
-| Analytics | Google Sheets + Apps Script (sheets: AIQueries, DocViews, Searches, Feedback) |
+| Analytics | Google Sheets + Apps Script (sheets: Sessions, AIQueries, DocViews, Searches, Feedback) |
 | Graph Auth | MSAL / Teams SSO — Azure AD app registration pending IT approval |
 | Dev | Claude Code — local repo at `~/cshelper` on Zach's MacBook |
 
@@ -61,7 +61,13 @@ Admin-only. Walks each brand folder's Graph `delta` endpoint, merges changes int
 Client-side retrieval + LLM. Filters `allDocs` for matches, builds a system prompt with doc names/snippets, POSTs to Anthropic via Cloudflare Worker proxy (`claude-sonnet-4-20250514`). `addFeedback` / `submitFeedback` capture thumbs up/down. Negative feedback requires a note before submitting. `addEscalateBtn` adds an escalation summary button that auto-copies to clipboard.
 
 **ANALYTICS LOGGING** (`gasLog`)
-Fires-and-forgets to GAS via Cloudflare Worker proxy for AIQueries, DocViews, Searches, and Feedback events.
+Fires-and-forgets to GAS via Cloudflare Worker proxy. `sessionId` generated once per page load via `crypto.randomUUID()`. `aiCtx` fully removed — `browseBrandFilter` (value of `activeBrand` at query time) is used instead. Sheet schemas:
+
+- **Sessions**: `[ts, sessionId, agentName, platform, appVersion]` — fired once after name is set. Manual step: create this sheet in the Google Sheet with these headers.
+- **AIQueries**: `[ts, sessionId, agentName, query, browseBrandFilter, hitsCount, hitsIds, responseMs, isFollowUp, queryIndex]`
+- **DocViews**: `[ts, sessionId, agentName, docName, brand, docType]`
+- **Searches**: `[ts, sessionId, agentName, searchTerm, resultCount, eventType]` — eventType is `search` or `search_click`
+- **Feedback**: `[ts, sessionId, agentName, query, browseBrandFilter, aiResponse, rating, freeText, queryIndexInSession]`
 
 **Console view**
 Admin-only analytics tab. `renderTopQueries`, `renderPainPoints`, `renderBrandChart`, `renderTopDocs`, `renderSyncHealth`, `renderQueryLog`. Two views toggled by `switchTab`: `view-kb` and `view-console`.
@@ -87,7 +93,7 @@ Brand keys (`DiabloSport`, `Edge`, `Superchips`, `Range`, `Training`) are used a
 
 ## Current Version
 
-<!-- VERSION --> 1.2.7
+<!-- VERSION --> 1.2.8
 
 This line must stay in sync with `const VERSION` in `index.html` and `version.json` in the repo root. All three update together in every commit.
 
