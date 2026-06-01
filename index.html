@@ -1191,7 +1191,7 @@ async function askEscalate(priorText,confirmEl){
   const loadingMsg=addMsg('ai','<em style="color:var(--text3)">Generating escalation summary…</em>');
   const sys=`You are an expert technical customer support assistant for Holley's automotive tuning brands: DiabloSport, Edge Products, Superchips, and Range Technology.`;
   try{
-    const res=await fetch('https://cshelper-proxy.zwhill.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:800,system:sys,messages:[{role:'user',content:`Previous AI response:\n${priorText}\n\n${escalateQ}`]})});
+    const res=await fetch('https://cshelper-proxy.zwhill.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:800,system:sys,messages:[{role:'user',content:'Previous AI response:\n'+priorText+'\n\n'+escalateQ}]})});
     const data=await res.json();
     const text=data.content?.find(b=>b.type==='text')?.text||'No response.';
     loadingMsg.innerHTML=mdToHtml(text);
