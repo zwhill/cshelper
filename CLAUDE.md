@@ -74,6 +74,8 @@ Fires-and-forgets to GAS via Cloudflare Worker proxy. `sessionId` generated once
 
 **Manual steps required:** Create `Sessions`, `FeedbackGeneral` sheets in Google Sheet with correct headers (see schema above).
 
+Feedback buttons (header topbar + doc viewer bottom bar) use an outlined accent style: `1.5px solid var(--red)`, transparent background, red text, fills red on hover. Rating values corrected to `'up'` / `'down'` (was `thumbs_up` / `thumbs_down`). Console filter accepts both for backward compatibility.
+
 **Console view**
 Admin-only analytics tab. `renderTopQueries`, `renderPainPoints`, `renderBrandChart`, `renderTopDocs`, `renderSyncHealth`, `renderQueryLog`. Two views toggled by `switchTab`: `view-kb` and `view-console`.
 
@@ -98,7 +100,7 @@ Brand keys (`DiabloSport`, `Edge`, `Superchips`, `Range`, `Training`) are used a
 
 ## Current Version
 
-<!-- VERSION --> 1.2.9
+<!-- VERSION --> 1.2.10
 
 This line must stay in sync with `const VERSION` in `index.html` and `version.json` in the repo root. All three update together in every commit.
 
