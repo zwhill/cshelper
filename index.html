@@ -237,6 +237,7 @@ col.col-rq-time{width:68px}
     <button class="sync-btn" id="fullsyncbtn" onclick="runDeltaSync(true)">Full Sync</button>
   </div>
   <button id="feedback-btn" onclick="openFeedbackPanel()" style="background:transparent;border:1.5px solid var(--red);border-radius:var(--rsm);padding:7px 16px;font-size:14px;font-weight:600;color:var(--red);cursor:pointer;white-space:nowrap;transition:background .15s,color .15s" onmouseover="this.style.background='var(--red)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--red)'">Feedback</button>
+  <button id="tour-btn" onclick="startTour()" style="background:transparent;border:1.5px solid var(--border2);border-radius:var(--rsm);padding:7px 14px;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--text3)'">Tour</button>
   <div id="user-chip" onclick="currentRole!=='admin'&&promptAdminAccess()" title="Click to unlock admin">
     <span id="user-name">CS Agent</span>
     <span class="role-badge role-agent" id="role-badge">Agent</span>
