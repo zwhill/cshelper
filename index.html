@@ -1794,7 +1794,7 @@ ${KNOWLEDGE_BLOCK}
 
 Relevant knowledgebase documents:
 ${hits.length > 0
-  ? hits.map(d => \`• [\${d.brand}] \${d.name}\${d.snippet ? ' — ' + d.snippet : ''}\`).join('\n')
+  ? hits.map(d => `• [${d.brand}] ${d.name}${d.snippet ? ' — ' + d.snippet : ''}`).join('\n')
   : 'No specific matches found — use knowledge map above and flag if uncertain.'}
 
 Rules:
