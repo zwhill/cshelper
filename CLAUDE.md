@@ -110,7 +110,7 @@ Brand keys (`DiabloSport`, `Edge`, `Superchips`, `Range`, `Training`) are used a
 
 ## Current Version
 
-<!-- VERSION --> 1.3.2
+<!-- VERSION --> 1.3.3
 
 This line must stay in sync with `const VERSION` in `index.html` and `version.json` in the repo root. All three update together in every commit.
 
