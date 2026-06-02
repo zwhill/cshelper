@@ -131,6 +131,28 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 .kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:14px 16px}
 .kpi .kv{font-size:28px;font-weight:700;color:#fff;line-height:1}.kpi .kl{font-size:11px;color:var(--text3);margin-top:4px}.kpi .kd{font-size:11px;margin-top:3px}
 .kd-up{color:var(--green)}.kd-dn{color:var(--red)}.kd-neu{color:var(--text3)}
+.rq-scroll{max-height:340px;overflow-y:auto}
+.rq-scroll::-webkit-scrollbar{width:6px}
+.rq-scroll::-webkit-scrollbar-track{background:var(--bg)}
+.rq-scroll::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
+.rq-scroll thead{position:sticky;top:0;background:var(--surface);z-index:1}
+col.col-rq-query{width:auto}
+col.col-rq-agent{width:90px}
+col.col-rq-resp{width:60px}
+col.col-rq-time{width:68px}
+.rq-cell{padding:9px 8px 9px 0}
+.rq-cell-r{padding:9px 0}
+.rq-wrap{display:flex;align-items:stretch}
+.rq-followup{width:3px;background:var(--red);border-radius:2px;flex-shrink:0;margin-right:8px}
+.rq-zero{background:#1a0d0d}
+.rq-zero-tag{font-size:10px;color:var(--red);display:block;line-height:1.4}
+.rq-resp-ok{color:var(--green);font-size:12px;font-weight:600;display:block}
+.rq-resp-slow{color:var(--amber);font-size:12px;font-weight:600;display:block}
+.rq-resp-none{color:var(--text3);font-size:12px;font-weight:600;display:block}
+.rq-legend{display:flex;gap:20px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.rql-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text3)}
+.rql-bar{width:3px;height:14px;background:var(--red);border-radius:2px}
+.rql-zero{width:20px;height:10px;background:#1a0d0d;border:1px solid #5a1a1a;border-radius:2px}
 .qt{width:100%;border-collapse:collapse}
 .qt th{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);padding:0 0 8px;text-align:left;border-bottom:1px solid var(--border)}
 .qt td{padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}.qt tr:last-child td{border-bottom:none}
@@ -289,7 +311,35 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
       <div class="kpi"><div class="kv kd-dn" id="kpi-thumbs-down">—</div><div class="kl">Thumbs Down</div></div>
     </div>
     <div class="console-grid">
-      <div class="cc"><h3>Top queries <span class="badge" id="tq-badge">0 total</span></h3><div id="top-queries-list"><div style="color:var(--text3);font-size:13px">No queries yet.</div></div></div>
+      <div class="cc">
+        <h3>Recent Queries <span class="badge" id="rq-badge">0 queries</span></h3>
+        <div class="rq-scroll">
+          <table class="qt" style="table-layout:fixed">
+            <colgroup>
+              <col class="col-rq-query">
+              <col class="col-rq-agent">
+              <col class="col-rq-resp">
+              <col class="col-rq-time">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Query</th>
+                <th>Agent</th>
+                <th style="text-align:right">Resp</th>
+                <th style="text-align:right">Time</th>
+              </tr>
+            </thead>
+            <tbody id="recent-queries-body">
+              <tr><td colspan="4" style="color:var(--text3);padding:20px 0;text-align:center">No queries yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="rq-legend">
+          <div class="rql-item"><div class="rql-bar"></div> follow-up query</div>
+          <div class="rql-item"><div class="rql-zero"></div> zero hits</div>
+          <div class="rql-item"><span style="color:var(--amber);font-size:11px;font-weight:700">8s</span> slow (&gt;5s)</div>
+        </div>
+      </div>
       <div class="cc"><h3>⚠ Pain points <span class="badge" style="color:#f88;background:#2a0d0d;border:1px solid #5a1a1a" id="pp-badge">0 gaps</span></h3><p style="font-size:11px;color:var(--text3);margin-bottom:12px">Queries with no matching documents.</p><div class="pp-list" id="pain-points-list"><div style="color:var(--text3);font-size:13px">No gaps detected yet.</div></div></div>
     </div>
     <div class="console-grid">
@@ -306,12 +356,6 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
         <div>Sync type: <span style="color:var(--text2)" id="con-sync-type">—</span></div>
         <div>Changes: <span style="color:var(--text2)" id="con-sync-changes">—</span></div>
       </div>
-    </div>
-    <div class="cc"><h3>Recent query log <span class="badge" id="log-badge">Last 50</span></h3>
-      <div style="overflow-x:auto"><table class="qt" id="query-log-table">
-        <thead><tr><th>Query</th><th>Agent</th><th>Brand</th><th style="text-align:right">Hits</th><th style="text-align:right">Resp</th><th style="text-align:center">↩</th><th style="text-align:right">Time</th></tr></thead>
-        <tbody id="query-log-body"><tr><td colspan="7" style="color:var(--text3);padding:20px 0;text-align:center">No queries logged yet.</td></tr></tbody>
-      </table></div>
     </div>
     <div class="cc" style="margin-bottom:16px">
       <h3>Revision history <span class="badge" id="changelog-badge">v1.2.10 current</span></h3>
@@ -1428,7 +1472,7 @@ function refreshConsole(){
       renderConsoleWith(allTimeCache);
     } else {
       // show loading state
-      ['top-queries-list','pain-points-list','brand-bar-chart','top-docs-list','query-log-body'].forEach(id=>{
+      ['recent-queries-body','pain-points-list','brand-bar-chart','top-docs-list'].forEach(id=>{
         const el=document.getElementById(id);
         if(el)el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:12px 0">Loading…</div>';
       });
@@ -1440,7 +1484,7 @@ function refreshConsole(){
           renderConsoleWith(allTimeCache);
         })
         .catch(e=>{
-          document.getElementById('top-queries-list').innerHTML=`<div style="color:#f66;font-size:13px">Error loading data: ${esc(e.message)}</div>`;
+          document.getElementById('recent-queries-body').innerHTML=`<tr><td colspan="4" style="color:#f66;font-size:13px;padding:12px 0">Error loading data: ${esc(e.message)}</td></tr>`;
         });
     }
     return;
@@ -1469,37 +1513,41 @@ function renderConsoleWith(data){
   document.getElementById('kpi-thumbs-down').textContent=fb.length?fb.filter(f=>['down','thumbs_down'].includes(f.rating)).length:'—';
   const prev=analytics;
   analytics=data;
-  renderTopQueries();renderPainPoints(zh,data.negFeedback||[]);renderBrandChart();renderTopDocs();renderSyncHealth();renderQueryLog();renderFeedbackSummary();renderChangelog();
+  renderRecentQueries();renderPainPoints(zh,data.negFeedback||[]);renderBrandChart();renderTopDocs();renderSyncHealth();renderFeedbackSummary();renderChangelog();
   analytics=prev;
   document.getElementById('con-last-sync').textContent=lastSyncMeta.time?new Date(lastSyncMeta.time).toLocaleString():'Never';
   document.getElementById('con-sync-type').textContent=lastSyncMeta.type||'—';
   document.getElementById('con-sync-changes').textContent=lastSyncMeta.time?`+${lastSyncMeta.added||0} ~${lastSyncMeta.modified||0} -${lastSyncMeta.deleted||0}`:'—';
 }
 
-function renderTopQueries(){
-  const freq={};
-  analytics.queries.forEach(q=>{
-    const k=q.q.toLowerCase().trim();
-    if(!freq[k])freq[k]={count:0,brand:q.brand,hits:q.hitsCount||q.hits||0,totalMs:0,respCount:0};
-    freq[k].count++;
-    freq[k].totalMs=(freq[k].totalMs||0)+(q.responseMs||0);
-    freq[k].respCount=(freq[k].respCount||0)+(q.responseMs>0?1:0);
-  });
-  const sorted=Object.entries(freq).sort((a,b)=>b[1].count-a[1].count).slice(0,8);
-  document.getElementById('tq-badge').textContent=analytics.queries.length+' total';
-  if(!sorted.length){document.getElementById('top-queries-list').innerHTML='<div style="color:var(--text3);font-size:13px">No queries yet.</div>';return;}
-  const max=sorted[0]?.[1].count||1;
-  document.getElementById('top-queries-list').innerHTML=`<table class="qt"><thead><tr><th>Query</th><th>Brand</th><th style="text-align:right">Count</th><th style="text-align:right">Hits</th><th style="text-align:right">Resp</th></tr></thead><tbody>`+
-    sorted.map(([q,d])=>{
-      const avgResp=d.respCount>0?(d.totalMs/d.respCount/1000).toFixed(1)+'s':'—';
-      return`<tr>
-        <td><div class="q-text" title="${esc(q)}">${esc(q)}</div><div class="q-bar" style="background:${BRANDS[d.brand]?.color||'#888'};width:${Math.round(d.count/max*100)}%;opacity:.4"></div></td>
-        <td><span class="q-brand" style="color:${BRANDS[d.brand]?.color||'#888'}">${d.brand||'All'}</span></td>
-        <td class="q-count">${d.count}</td>
-        <td class="q-hits ${d.hits===0?'q-hits-low':'q-hits-ok'}">${d.hits===0?'⚠ 0':d.hits}</td>
-        <td style="text-align:right;color:var(--text3);font-size:11px">${avgResp}</td>
-      </tr>`;
-    }).join('')+'</tbody></table>';
+function renderRecentQueries(){
+  const list=[...analytics.queries].reverse().slice(0,50);
+  document.getElementById('rq-badge').textContent=analytics.queries.length+' quer'+(analytics.queries.length===1?'y':'ies');
+  if(!list.length){
+    document.getElementById('recent-queries-body').innerHTML='<tr><td colspan="4" style="color:var(--text3);padding:20px 0;text-align:center">No queries yet.</td></tr>';
+    return;
+  }
+  document.getElementById('recent-queries-body').innerHTML=list.map(q=>{
+    const isZero=(q.hitsCount??q.hits??0)===0;
+    const isSlow=q.responseMs>5000;
+    const respHtml=isZero
+      ?'<span class="rq-zero-tag">⚠ 0 hits</span><span class="rq-resp-none">—</span>'
+      :isSlow
+        ?`<span class="rq-resp-slow">${(q.responseMs/1000).toFixed(1)}s</span>`
+        :(q.responseMs>0)
+          ?`<span class="rq-resp-ok">${(q.responseMs/1000).toFixed(1)}s</span>`
+          :'<span class="rq-resp-none">—</span>';
+    const rowCls=isZero?'rq-zero':'';
+    const rawAgent=q.agentName||agentName||'—';
+    const agentShort=rawAgent.length>14?rawAgent.slice(0,13)+'…':rawAgent;
+    const timeStr=q.ts?new Date(q.ts).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'}):'—';
+    return`<tr class="${rowCls}">
+      <td><div class="rq-cell"><div class="rq-wrap">${q.isFollowUp?'<div class="rq-followup"></div>':''}<span style="color:var(--text);line-height:1.5">${esc(q.q)}</span></div></div></td>
+      <td style="vertical-align:middle"><span style="font-size:11px;color:#888">${esc(agentShort)}</span></td>
+      <td style="text-align:right;vertical-align:middle" class="rq-cell-r">${respHtml}</td>
+      <td style="text-align:right;vertical-align:middle" class="rq-cell-r"><span style="color:var(--text3);font-size:11px;white-space:nowrap">${timeStr}</span></td>
+    </tr>`;
+  }).join('');
 }
 
 function renderPainPoints(zh,negFb){
@@ -1581,25 +1629,7 @@ function renderFeedbackSummary(){
     </div>`).join('');
 }
 
-function renderQueryLog(){
-  const recent=[...analytics.queries].reverse().slice(0,50);
-  if(!recent.length){document.getElementById('query-log-body').innerHTML='<tr><td colspan="7" style="color:var(--text3);padding:20px 0;text-align:center">No queries yet.</td></tr>';return;}
-  document.getElementById('log-badge').textContent=`Last ${Math.min(recent.length,50)}`;
-  document.getElementById('query-log-body').innerHTML=recent.map(q=>{
-    const hits=q.hitsCount||q.hits||0;
-    const resp=q.responseMs>0?(q.responseMs/1000).toFixed(1)+'s':'—';
-    const agent=(q.agentName||'').substring(0,14);
-    return`<tr>
-      <td><span class="q-text" style="max-width:240px;display:inline-block">${esc(q.q)}</span></td>
-      <td style="color:var(--text2);font-size:11px">${esc(agent)}</td>
-      <td><span style="color:${BRANDS[q.brand]?.color||'#888'};font-size:11px;font-weight:700">${q.brand||'All'}</span></td>
-      <td class="${hits===0?'q-hits-low':'q-hits-ok'}" style="text-align:right">${hits===0?'⚠ 0':hits}</td>
-      <td style="text-align:right;color:var(--text3);font-size:11px">${resp}</td>
-      <td style="text-align:center;color:var(--text3);font-size:11px">${q.isFollowUp?'↩':''}</td>
-      <td style="color:var(--text3);font-size:11px;text-align:right">${new Date(q.ts).toLocaleTimeString()}</td>
-    </tr>`;
-  }).join('');
-}
+// renderQueryLog() removed — superseded by renderRecentQueries()
 
 // ── BANNER ─────────────────────────────────────────────────
 function showBanner(type,msg){
