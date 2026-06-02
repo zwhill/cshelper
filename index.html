@@ -337,17 +337,72 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 // ── CONFIG ─────────────────────────────────────────────────
 const VERSION = '1.2.10';
 const CHANGELOG = [
-  { version: '1.2.10', date: 'Jun 1, 2026', title: 'Feedback button styling + rating fix', items: ['Header and doc viewer Feedback buttons use outlined accent (var(--red)) style', 'Feedback button added to doc viewer bottom bar', 'Rating values corrected: thumbs_up→up, thumbs_down→down', 'Console filter accepts both down and thumbs_down for backward compat'], tags: ['feature', 'fix'] },
-  { version: '1.2.9', date: 'Jun 1, 2026', title: 'Feedback enhancements', items: ['Feedback→FeedbackAI renamed, expanded to 15 columns including platform, docId, hitsIds, responseMs', 'FeedbackGeneral panel — header button opens modal with type, detail, doc fields', 'currentDocId/currentDocName tracked per doc open, reset on modal close', 'gasLog schema comments updated throughout'], tags: ['feature', 'infra'] },
-  { version: '1.2.8', date: 'Jun 1, 2026', title: 'Analytics instrumentation pass', items: ['sessionId (UUID) generated per page load, logged to new Sessions sheet', 'AIQueries: hitsIds, responseMs, isFollowUp, queryIndex added', 'Feedback: browseBrandFilter, queryIndexInSession added', 'Search click-through logged as search_click event type', 'normalizeGasData column indices updated for new schemas'], tags: ['infra', 'admin'] },
-  { version: '1.2.7', date: 'Jun 1, 2026', title: 'Remove aiCtx dead variable', items: ['aiCtx variable and context bar removed entirely', 'clearCtx() deleted, setView() cleaned up, askAbout() simplified', 'browseBrandFilter replaces all placeholder in AIQueries and Feedback'], tags: ['fix'] },
-  { version: '1.2.6', date: 'Jun 1, 2026', title: 'AI searches all docs', items: ['AI retrieval no longer filtered by browse pane brand — searches all docs', 'Brand context removed from system prompt injection'], tags: ['fix'] },
-  { version: '1.2.5', date: 'Jun 1, 2026', title: 'Clickable version in sidebar', items: ['Version number in sidebar footer opens revision history in doc modal', 'closeModal() restores doc footer buttons after changelog view'], tags: ['feature'] },
-  { version: '1.2.4', date: 'Jun 1, 2026', title: 'Revision history card', items: ['Revision history card in console view — versioned changelog with tags', 'CHANGELOG constant in CONFIG, renderChangelog() called on console open'], tags: ['admin', 'feature'] },
-  { version: '1.2.2', date: 'Jun 1, 2026', title: 'Citation pills + escalation', items: ['Citation pills in AI responses — inline doc links open SharePoint embed modal', 'Escalation summary button auto-copies to clipboard', 'Negative feedback now requires a note before submitting'], tags: ['feature', 'admin'] },
-  { version: '1.1.4', date: 'May 28, 2026', title: 'Mobile layout', items: ['Mobile tab layout — Docs, AI, Info tabs with fixed bottom bar', 'Mobile doc viewing uses window.open to bypass Safari iframe block', 'Full-screen search overlay on mobile'], tags: ['feature', 'fix'] },
-  { version: '1.0.9', date: 'May 20, 2026', title: 'Console + analytics', items: ['All Time analytics toggle in console — fetches all sheets via GAS doGet', 'Pain points section shows zero-hit queries and thumbs down entries', 'Agent name modal on load, prepended to all log rows'], tags: ['admin', 'infra'] },
-  { version: '1.0.0', date: 'May 8, 2026', title: 'Initial POC', items: ['Initial POC — 226 seeded docs, AI assistant, SharePoint embed modal', 'Cloudflare Worker proxy, GAS analytics logging', 'Admin/console tab with session analytics'], tags: ['feature', 'infra'] }
+  {
+    version: '1.2.10', date: 'Jun 1, 2026', title: 'Feedback button styling + rating fix',
+    userItems: ['Feedback button now stands out more in the toolbar and inside the document viewer'],
+    adminItems: ['Header and doc viewer Feedback buttons use outlined accent var(--red) style', 'Feedback button added to doc viewer bottom bar', 'Rating values corrected: thumbs_up→up, thumbs_down→down', 'Console filter accepts both down and thumbs_down for backward compat'],
+    tags: ['feature', 'fix']
+  },
+  {
+    version: '1.2.9', date: 'Jun 1, 2026', title: 'Feedback improvements',
+    userItems: ['New Feedback button in the toolbar — report wrong answers, missing docs, or anything else directly from the app', 'When you have a document open, feedback automatically references it'],
+    adminItems: ['Feedback→FeedbackAI renamed, expanded to 15 columns including platform, docId, hitsIds, responseMs', 'FeedbackGeneral panel — header button opens modal with type, detail, doc fields', 'currentDocId/currentDocName tracked per doc open, reset on modal close', 'gasLog schema comments updated throughout'],
+    tags: ['feature', 'infra']
+  },
+  {
+    version: '1.2.8', date: 'Jun 1, 2026', title: 'Usage tracking improvements',
+    userItems: ['App now tracks sessions to help the team understand how CSHelper is being used and improve it over time'],
+    adminItems: ['sessionId (UUID) generated per page load, logged to new Sessions sheet', 'AIQueries: hitsIds, responseMs, isFollowUp, queryIndex added', 'Feedback: browseBrandFilter, queryIndexInSession added', 'Search click-through logged as search_click event type', 'normalizeGasData column indices updated for new schemas'],
+    tags: ['infra', 'admin']
+  },
+  {
+    version: '1.2.7', date: 'Jun 1, 2026', title: 'AI search cleanup',
+    userItems: ['Minor internal cleanup — no visible changes'],
+    adminItems: ['aiCtx variable and context bar removed entirely', 'clearCtx() deleted, setView() cleaned up, askAbout() simplified', 'browseBrandFilter replaces all placeholder in AIQueries and Feedback'],
+    tags: ['fix']
+  },
+  {
+    version: '1.2.6', date: 'Jun 1, 2026', title: 'AI searches all brands',
+    userItems: ['The AI assistant now searches across all brands regardless of which brand filter you have selected in the browse pane — you no longer need to clear your filter before asking a question'],
+    adminItems: ['AI retrieval no longer filtered by browse pane brand — searches all docs', 'Brand context removed from system prompt injection'],
+    tags: ['fix']
+  },
+  {
+    version: '1.2.5', date: 'Jun 1, 2026', title: 'Clickable version number',
+    userItems: ['Tap the version number in the sidebar to see the full update history'],
+    adminItems: ['Version number in sidebar footer opens revision history in doc modal', 'closeModal() restores doc footer buttons after changelog view'],
+    tags: ['feature']
+  },
+  {
+    version: '1.2.4', date: 'Jun 1, 2026', title: 'Revision history',
+    userItems: ['Update history is now available in the admin console'],
+    adminItems: ['Revision history card in console view — versioned changelog with tags', 'CHANGELOG constant in CONFIG, renderChangelog() called on console open'],
+    tags: ['admin', 'feature']
+  },
+  {
+    version: '1.2.2', date: 'Jun 1, 2026', title: 'Citation links + escalation',
+    userItems: ['AI responses now show doc reference links — click them to open the source document', 'New Escalate button in AI responses — generates a summary and copies it to your clipboard ready to paste', 'Thumbs down now requires a brief note so the team knows what went wrong'],
+    adminItems: ['Citation pills in AI responses — inline doc links open SharePoint embed modal', 'Escalation summary button auto-copies to clipboard', 'Negative feedback now requires a note before submitting'],
+    tags: ['feature', 'admin']
+  },
+  {
+    version: '1.1.4', date: 'May 28, 2026', title: 'Mobile layout',
+    userItems: ['CSHelper now works on mobile — tab navigation, full-screen search, and documents open in a new tab on mobile browsers'],
+    adminItems: ['Mobile tab layout — Docs, AI, Info tabs with fixed bottom bar', 'Mobile doc viewing uses window.open to bypass Safari iframe block', 'Full-screen search overlay on mobile'],
+    tags: ['feature', 'fix']
+  },
+  {
+    version: '1.0.9', date: 'May 20, 2026', title: 'Analytics console',
+    userItems: ['Your name is now shown in usage logs to help the team track tool adoption'],
+    adminItems: ['All Time analytics toggle in console — fetches all sheets via GAS doGet', 'Pain points section shows zero-hit queries and thumbs down entries', 'Agent name modal on load, prepended to all log rows'],
+    tags: ['admin', 'infra']
+  },
+  {
+    version: '1.0.0', date: 'May 8, 2026', title: 'Initial launch',
+    userItems: ['CSHelper launched — 226 documents across DiabloSport, Edge, Superchips, Range, and Training', 'AI assistant, document previews, and brand filtering'],
+    adminItems: ['Initial POC — 226 seeded docs, AI assistant, SharePoint embed modal', 'Cloudflare Worker proxy, GAS analytics logging', 'Admin/console tab with session analytics'],
+    tags: ['feature', 'infra']
+  }
 ];
 const ADMIN_PASSWORD = 'holley2025'; // Change before deploying
 const DRIVE_ID = 'b!EfZxkrs-dEGVFhCFYOUKwmSNQKpiLb5MpRWvv3Vv30zqJE9Ptb93TYuxqw9XdR20';
@@ -1009,7 +1064,8 @@ function renderChangelog(){
     const line=i<CHANGELOG.length-1
       ?`<div style="width:1px;flex:1;background:var(--border2);margin-top:6px;min-height:20px"></div>`:'';
     const tags=e.tags.map(t=>`<span class="tag ${tagCls[t]||''}">${tagLabel[t]||t}</span>`).join('');
-    const items=e.items.map(it=>`<div style="font-size:12px;color:var(--text2);display:flex;gap:7px;align-items:baseline"><span style="color:var(--text3)">·</span>${esc(it)}</div>`).join('');
+    const displayItems=(currentRole==='admin')?e.adminItems:e.userItems;
+    const items=displayItems.map(it=>`<div style="font-size:12px;color:var(--text2);display:flex;gap:7px;align-items:baseline"><span style="color:var(--text3)">·</span>${esc(it)}</div>`).join('');
     return`<div style="display:flex;gap:14px;padding:10px 0;border-bottom:${i<CHANGELOG.length-1?'1px solid var(--border)':'none'}">
       <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:56px">${dot}${line}</div>
       <div style="flex:1;padding-top:1px">
@@ -1038,7 +1094,8 @@ function openChangelog(){
     const line=i<CHANGELOG.length-1
       ?`<div style="width:1px;flex:1;background:var(--border2);margin-top:6px;min-height:20px"></div>`:'';
     const tags=e.tags.map(t=>`<span class="tag ${tagCls[t]||''}">${tagLabel[t]||t}</span>`).join('');
-    const items=e.items.map(it=>`<div style="font-size:12px;color:var(--text2);display:flex;gap:7px;align-items:baseline"><span style="color:var(--text3)">·</span>${esc(it)}</div>`).join('');
+    const displayItems=(currentRole==='admin')?e.adminItems:e.userItems;
+    const items=displayItems.map(it=>`<div style="font-size:12px;color:var(--text2);display:flex;gap:7px;align-items:baseline"><span style="color:var(--text3)">·</span>${esc(it)}</div>`).join('');
     return`<div style="display:flex;gap:14px;padding:10px 0;border-bottom:${i<CHANGELOG.length-1?'1px solid var(--border)':'none'}">
       <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:56px">${dot}${line}</div>
       <div style="flex:1;padding-top:1px">

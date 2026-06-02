@@ -76,6 +76,8 @@ Fires-and-forgets to GAS via Cloudflare Worker proxy. `sessionId` generated once
 
 Feedback buttons (header topbar + doc viewer bottom bar) use an outlined accent style: `1.5px solid var(--red)`, transparent background, red text, fills red on hover. Rating values corrected to `'up'` / `'down'` (was `thumbs_up` / `thumbs_down`). Console filter accepts both for backward compatibility.
 
+CHANGELOG entries now have two item arrays: `userItems` (plain-language, shown to agents) and `adminItems` (technical, shown to admins). Both `renderChangelog()` and `openChangelog()` conditionally render based on `currentRole === 'admin'`.
+
 **Console view**
 Admin-only analytics tab. `renderTopQueries`, `renderPainPoints`, `renderBrandChart`, `renderTopDocs`, `renderSyncHealth`, `renderQueryLog`. Two views toggled by `switchTab`: `view-kb` and `view-console`.
 
