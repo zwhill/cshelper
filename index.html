@@ -173,11 +173,6 @@ col.col-rq-time{width:68px}
 .doc-row .dr-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .doc-row .dr-name{font-size:12px;color:var(--text2);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .doc-row .dr-views{font-size:12px;color:#fff;font-weight:600;white-space:nowrap}
-.health-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
-.health-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);padding:10px;text-align:center}
-.health-card .hc-brand{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px}
-.health-card .hc-count{font-size:20px;font-weight:700;color:#fff}.health-card .hc-label{font-size:10px;color:var(--text3);margin-top:2px}
-.health-card .hc-status{font-size:10px;margin-top:4px}.hcs-ok{color:var(--green)}.hcs-warn{color:var(--amber)}
 
 /* MODAL */
 #modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center}
@@ -350,13 +345,6 @@ col.col-rq-time{width:68px}
     <div class="cc" style="margin-bottom:16px">
       <h3>Feedback summary <span class="badge" id="fb-badge">0 ratings</span></h3>
       <div id="feedback-summary-list"></div>
-    </div>
-    <div class="cc" style="margin-bottom:16px"><h3>Knowledgebase health</h3><div class="health-grid" id="health-grid"></div>
-      <div style="margin-top:14px;display:flex;gap:24px;font-size:12px;color:var(--text3)">
-        <div>Last sync: <span style="color:var(--text2)" id="con-last-sync">Never</span></div>
-        <div>Sync type: <span style="color:var(--text2)" id="con-sync-type">—</span></div>
-        <div>Changes: <span style="color:var(--text2)" id="con-sync-changes">—</span></div>
-      </div>
     </div>
     <div class="cc" style="margin-bottom:16px">
       <h3>Revision history <span class="badge" id="changelog-badge">v1.2.10 current</span></h3>
@@ -1561,11 +1549,7 @@ function renderConsoleWith(data){
   document.getElementById('kpi-thumbs-down').textContent=fb.length?fb.filter(f=>['down','thumbs_down'].includes(f.rating)).length:'—';
   const prev=analytics;
   analytics=data;
-  renderRecentQueries();renderPainPoints(zh,data.negFeedback||[]);renderBrandChart();renderTopDocs();renderSyncHealth();renderFeedbackSummary();renderChangelog();
-  analytics=prev;
-  document.getElementById('con-last-sync').textContent=lastSyncMeta.time?new Date(lastSyncMeta.time).toLocaleString():'Never';
-  document.getElementById('con-sync-type').textContent=lastSyncMeta.type||'—';
-  document.getElementById('con-sync-changes').textContent=lastSyncMeta.time?`+${lastSyncMeta.added||0} ~${lastSyncMeta.modified||0} -${lastSyncMeta.deleted||0}`:'—';
+  renderRecentQueries();renderPainPoints(zh,data.negFeedback||[]);renderBrandChart();renderTopDocs();renderFeedbackSummary();renderChangelog();
 }
 
 function renderRecentQueries(){
@@ -1642,15 +1626,6 @@ function renderTopDocs(){
     </div>`).join('');
 }
 
-function renderSyncHealth(){
-  const counts={};Object.keys(FOLDER_IDS).forEach(b=>counts[b]=allDocs.filter(d=>d.brand===b).length);
-  document.getElementById('health-grid').innerHTML=Object.entries(counts).map(([b,c])=>`
-    <div class="health-card">
-      <div class="hc-brand" style="color:${BRANDS[b].color}">${b}</div>
-      <div class="hc-count">${c}</div><div class="hc-label">documents</div>
-      <div class="hc-status ${deltaTokens[b]?'hcs-ok':'hcs-warn'}">${deltaTokens[b]?'● Tokenized':'○ No token'}</div>
-    </div>`).join('');
-}
 
 function renderFeedbackSummary(){
   const fb=analytics.allFeedback||[];

@@ -82,7 +82,7 @@ CHANGELOG entries now have two item arrays: `userItems` (plain-language, shown t
 
 **Stats bar removed** from `#main` pane — `#stats` div and all writes to `s-total`, `s-show`, `s-queries` removed.
 
-**Console overhaul (no version bump):** `normalizeGasData` now extracts full schema for all sheets including `sessions` and `allFeedback`. KPIs expanded to 6 cards: AI Queries, Sessions, Unanswered, Avg Response, Thumbs Up, Thumbs Down. `renderFeedbackSummary()` added — per-agent thumbs up/down counts with notes.
+**Console overhaul (no version bump):** `normalizeGasData` now extracts full schema for all sheets including `sessions` and `allFeedback`. KPIs expanded to 6 cards: AI Queries, Sessions, Unanswered, Avg Response, Thumbs Up, Thumbs Down. `renderFeedbackSummary()` added — per-agent thumbs up/down counts with notes. Knowledgebase Health card removed (`renderSyncHealth()` deleted) — delta sync blocked on Azure AD.
 
 Top Queries and Query Log cards replaced by a single **Recent Queries** scrollable card (`renderRecentQueries()`). Shows last 50 queries in reverse-chron order with: red left-bar for follow-up queries, dark red row for zero-hits, green/amber response time coloring (slow = >5s), agent name, and legend. `renderTopQueries()` and `renderQueryLog()` removed.
 
