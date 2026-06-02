@@ -78,6 +78,10 @@ Feedback buttons (header topbar + doc viewer bottom bar) use an outlined accent 
 
 CHANGELOG entries now have two item arrays: `userItems` (plain-language, shown to agents) and `adminItems` (technical, shown to admins). Both `renderChangelog()` and `openChangelog()` conditionally render based on `currentRole === 'admin'`.
 
+**Stats bar removed** from `#main` pane — `#stats` div and all writes to `s-total`, `s-show`, `s-queries` removed.
+
+**Console overhaul (no version bump):** `normalizeGasData` now extracts full schema for all sheets including `sessions` and `allFeedback`. KPIs expanded to 6 cards: AI Queries, Sessions, Unanswered, Avg Response, Thumbs Up, Thumbs Down. Query log enriched with agent name, response time, and follow-up indicator (7 columns). `renderFeedbackSummary()` added — per-agent thumbs up/down counts with notes. `renderTopQueries` adds Resp column with avg response time per query.
+
 **Console view**
 Admin-only analytics tab. `renderTopQueries`, `renderPainPoints`, `renderBrandChart`, `renderTopDocs`, `renderSyncHealth`, `renderQueryLog`. Two views toggled by `switchTab`: `view-kb` and `view-console`.
 

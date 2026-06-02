@@ -56,7 +56,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
 #main::-webkit-scrollbar,#sidebar::-webkit-scrollbar{width:5px}
 #main::-webkit-scrollbar-track,#sidebar::-webkit-scrollbar-track{background:var(--bg)}
 #main::-webkit-scrollbar-thumb,#sidebar::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:3px}
-#sidebar-toggle{position:absolute;top:8px;left:0;width:22px;height:28px;background:var(--red);border:none;border-radius:0 4px 4px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;z-index:1;transition:left .2s,background .15s;user-select:none}
+#sidebar-toggle{position:absolute;top:8px;left:0;width:16px;height:22px;background:var(--red);border:none;border-radius:0 4px 4px 0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;z-index:1;transition:left .2s,background .15s;user-select:none}
 #sidebar-toggle:hover{background:var(--red-dark)}
 #view-kb{position:relative}
 .ns{padding:4px 13px 2px;font-size:10px;font-weight:700;letter-spacing:1.2px;color:var(--text3);text-transform:uppercase;margin-top:10px}
@@ -252,12 +252,7 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
       </div>
     </div>
     <div id="main">
-      <div id="stats">
-        <div class="sc2"><div class="sv" id="s-total">—</div><div class="sl">Total Documents</div></div>
-        <div class="sc2"><div class="sv" id="s-brands">5</div><div class="sl">Brand Folders</div></div>
-        <div class="sc2"><div class="sv" id="s-show">—</div><div class="sl">Showing</div></div>
-        <div class="sc2"><div class="sv" id="s-queries">0</div><div class="sl">AI Queries Today</div></div>
-      </div>
+
       <div id="banner-area"></div>
       <div class="shd"><h2 id="stitle">All Documents</h2><span class="cnt" id="rcnt"></span></div>
 
@@ -285,11 +280,13 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
         <button id="con-toggle-alltime" onclick="setConsoleMode('alltime')" style="padding:6px 18px;font-size:12px;font-weight:600;border:none;cursor:pointer;background:var(--surface2);color:var(--text3);transition:background .15s">All Time</button>
       </div>
     </div>
-    <div class="kpi-row">
-      <div class="kpi"><div class="kv" id="kpi-queries">0</div><div class="kl">AI Queries</div><div class="kd kd-neu">This session</div></div>
-      <div class="kpi"><div class="kv" id="kpi-doc-views">0</div><div class="kl">Doc Views</div><div class="kd kd-neu">This session</div></div>
-      <div class="kpi"><div class="kv" id="kpi-zero-hits">0</div><div class="kl">Unanswered Queries</div><div class="kd kd-dn">No matching docs</div></div>
-      <div class="kpi"><div class="kv" id="kpi-docs">0</div><div class="kl">Indexed Documents</div><div class="kd kd-neu">All brands</div></div>
+    <div class="kpi-row" style="grid-template-columns:repeat(6,1fr)">
+      <div class="kpi"><div class="kv" id="kpi-queries">0</div><div class="kl">AI Queries</div></div>
+      <div class="kpi"><div class="kv" id="kpi-sessions">—</div><div class="kl">Sessions</div></div>
+      <div class="kpi"><div class="kv kd-dn" id="kpi-zero-hits">0</div><div class="kl">Unanswered</div></div>
+      <div class="kpi"><div class="kv" id="kpi-avg-response">—</div><div class="kl">Avg Response</div></div>
+      <div class="kpi"><div class="kv kd-up" id="kpi-thumbs-up">—</div><div class="kl">Thumbs Up</div></div>
+      <div class="kpi"><div class="kv kd-dn" id="kpi-thumbs-down">—</div><div class="kl">Thumbs Down</div></div>
     </div>
     <div class="console-grid">
       <div class="cc"><h3>Top queries <span class="badge" id="tq-badge">0 total</span></h3><div id="top-queries-list"><div style="color:var(--text3);font-size:13px">No queries yet.</div></div></div>
@@ -298,6 +295,10 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
     <div class="console-grid">
       <div class="cc"><h3>Queries by brand</h3><div class="bar-list" id="brand-bar-chart"></div></div>
       <div class="cc"><h3>Most viewed documents</h3><div id="top-docs-list"><div style="color:var(--text3);font-size:13px">No doc views yet.</div></div></div>
+    </div>
+    <div class="cc" style="margin-bottom:16px">
+      <h3>Feedback summary <span class="badge" id="fb-badge">0 ratings</span></h3>
+      <div id="feedback-summary-list"></div>
     </div>
     <div class="cc" style="margin-bottom:16px"><h3>Knowledgebase health</h3><div class="health-grid" id="health-grid"></div>
       <div style="margin-top:14px;display:flex;gap:24px;font-size:12px;color:var(--text3)">
@@ -308,8 +309,8 @@ body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,san
     </div>
     <div class="cc"><h3>Recent query log <span class="badge" id="log-badge">Last 50</span></h3>
       <div style="overflow-x:auto"><table class="qt" id="query-log-table">
-        <thead><tr><th>Query</th><th>Brand</th><th>Doc hits</th><th>Time</th></tr></thead>
-        <tbody id="query-log-body"><tr><td colspan="4" style="color:var(--text3);padding:20px 0;text-align:center">No queries logged yet.</td></tr></tbody>
+        <thead><tr><th>Query</th><th>Agent</th><th>Brand</th><th style="text-align:right">Hits</th><th style="text-align:right">Resp</th><th style="text-align:center">↩</th><th style="text-align:right">Time</th></tr></thead>
+        <tbody id="query-log-body"><tr><td colspan="7" style="color:var(--text3);padding:20px 0;text-align:center">No queries logged yet.</td></tr></tbody>
       </table></div>
     </div>
     <div class="cc" style="margin-bottom:16px">
@@ -1013,8 +1014,7 @@ function escId(id){return String(id).replace(/['"\\]/g,'');}
 // ── RENDER ─────────────────────────────────────────────────
 function renderGrid(docs){
   const grid=document.getElementById('grid');
-  document.getElementById('s-total').textContent=allDocs.length;
-  document.getElementById('s-show').textContent=docs.length;
+  // s-total / s-show removed from DOM
   document.getElementById('rcnt').textContent=docs.length+' documents';
   if(!docs.length){grid.innerHTML='<div class="empty">📂 No documents match this filter.</div>';return;}
   grid.innerHTML=docs.map(d=>{
@@ -1039,7 +1039,7 @@ function updateCounts(){
     const mel=document.getElementById('m-cnt-'+b);
     if(mel)mel.textContent=cnt;
   });
-  document.getElementById('s-total').textContent=allDocs.length;
+  // s-total removed from DOM
 }
 
 function applyFilters(){renderGrid(activeBrand==='all'?allDocs:allDocs.filter(d=>d.brand===activeBrand));}
@@ -1222,7 +1222,7 @@ function logQuery(q,brand,hitsCount,hitsIds,responseMs,isFollowUp,queryIndex){
   const ts=new Date().toISOString();
   const entry={q,brand:brand||'all',hits:hitsCount,ts};
   analytics.queries.push(entry);
-  document.getElementById('s-queries').textContent=analytics.queries.length;
+  // s-queries removed from DOM
   console.log('[KB:query]',entry);
   // AIQueries: [ts, sessionId, agentName, query, browseBrandFilter, hitsCount, hitsIds, responseMs, isFollowUp, queryIndex]
   gasLog('AIQueries',[ts,sessionId,agentName,q,brand||'all',hitsCount,hitsIds,responseMs,isFollowUp,queryIndex]);
@@ -1397,13 +1397,29 @@ function setConsoleMode(mode){
 function normalizeGasData(sheets){
   const safe=arr=>(Array.isArray(arr)?arr:[]);
   const rows=arr=>safe(arr).slice(1).filter(r=>Array.isArray(r));
-  // AIQueries rows: [ts, sessionId, agentName, query, browseBrandFilter, hitsCount, hitsIds, responseMs, isFollowUp, queryIndex]
-  const queries=rows(sheets.AIQueries).map(r=>({ts:r[0]||'',q:r[3]||'',brand:r[4]||'all',hits:r[5]||1}));
-  // DocViews rows: [ts, sessionId, agentName, docName, brand, docType]
-  const docViews=rows(sheets.DocViews).map(r=>({ts:r[0]||'',name:r[3]||'',brand:r[4]||''}));
-  // FeedbackAI rows: [ts,sessionId,agentName,query,browseBrandFilter,aiResponse,rating,freeText,queryIndexInSession,platform,currentDocId,currentDocName,hitsCount,hitsIds,responseMs]
-  const negFeedback=rows(sheets.FeedbackAI).filter(r=>['down','thumbs_down'].includes((r[6]||'').toLowerCase())).map(r=>({ts:r[0]||'',q:r[3]||'',brand:r[4]||'all',note:r[7]||''}));
-  return{queries,docViews,negFeedback,sessionStart:new Date(0)};
+  // AIQueries: [ts,sessionId,agentName,query,browseBrandFilter,hitsCount,hitsIds,responseMs,isFollowUp,queryIndex]
+  const queries=rows(sheets.AIQueries).map(r=>({
+    ts:r[0]||'',sessionId:r[1]||'',agentName:r[2]||'',q:r[3]||'',brand:r[4]||'all',
+    hitsCount:Number(r[5])||0,hitsIds:r[6]||'',responseMs:Number(r[7])||0,
+    isFollowUp:r[8]==='true'||r[8]===true,queryIndex:Number(r[9])||0,
+    hits:Number(r[5])||0 // backward compat
+  }));
+  // DocViews: [ts,sessionId,agentName,docName,brand,docType]
+  const docViews=rows(sheets.DocViews).map(r=>({
+    ts:r[0]||'',sessionId:r[1]||'',agentName:r[2]||'',name:r[3]||'',brand:r[4]||'',docType:r[5]||''
+  }));
+  // FeedbackAI: [ts,sessionId,agentName,query,browseBrandFilter,aiResponse,rating,freeText,queryIndexInSession,platform,currentDocId,currentDocName,hitsCount,hitsIds,responseMs]
+  const allFeedback=rows(sheets.FeedbackAI).map(r=>({
+    ts:r[0]||'',agentName:r[2]||'',q:r[3]||'',brand:r[4]||'all',
+    rating:(r[6]||'').toLowerCase(),note:r[7]||'',platform:r[9]||'',
+    currentDocName:r[11]||'',hitsCount:Number(r[12])||0,responseMs:Number(r[14])||0
+  }));
+  const negFeedback=allFeedback.filter(f=>['down','thumbs_down'].includes(f.rating));
+  // Sessions: [ts,sessionId,agentName,platform,appVersion]
+  const sessions=rows(sheets.Sessions||[]).map(r=>({
+    ts:r[0]||'',sessionId:r[1]||'',agentName:r[2]||'',platform:r[3]||'',appVersion:r[4]||''
+  }));
+  return{queries,docViews,allFeedback,negFeedback,sessions,sessionStart:new Date(0)};
 }
 
 function refreshConsole(){
@@ -1416,9 +1432,7 @@ function refreshConsole(){
         const el=document.getElementById(id);
         if(el)el.innerHTML='<div style="color:var(--text3);font-size:13px;padding:12px 0">Loading…</div>';
       });
-      document.getElementById('kpi-queries').textContent='…';
-      document.getElementById('kpi-doc-views').textContent='…';
-      document.getElementById('kpi-zero-hits').textContent='…';
+      ['kpi-queries','kpi-sessions','kpi-zero-hits','kpi-avg-response','kpi-thumbs-up','kpi-thumbs-down'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='…';});
       fetch('https://cshelper-proxy.zwhill.workers.dev/?target='+encodeURIComponent(GAS_URL))
         .then(r=>r.json())
         .then(data=>{
@@ -1437,14 +1451,25 @@ function refreshConsole(){
 function renderConsoleWith(data){
   document.getElementById('con-session-start').textContent=data.sessionStart?data.sessionStart.toLocaleTimeString():'—';
   document.getElementById('con-refreshed').textContent=new Date().toLocaleTimeString();
+  // KPI 1: AI Queries
   document.getElementById('kpi-queries').textContent=data.queries.length;
-  document.getElementById('kpi-doc-views').textContent=data.docViews.length;
-  document.getElementById('kpi-docs').textContent=allDocs.length;
-  const zh=data.queries.filter(q=>q.hits===0);
+  // KPI 2: Unique Sessions
+  const uniqueSessions=new Set(data.queries.map(q=>q.sessionId).filter(Boolean)).size;
+  document.getElementById('kpi-sessions').textContent=uniqueSessions||'—';
+  // KPI 3: Unanswered
+  const zh=data.queries.filter(q=>(q.hitsCount||q.hits||0)===0);
   document.getElementById('kpi-zero-hits').textContent=zh.length;
+  // KPI 4: Avg Response
+  const withResp=data.queries.filter(q=>q.responseMs>0);
+  const avgResp=withResp.length?(withResp.reduce((s,q)=>s+q.responseMs,0)/withResp.length/1000).toFixed(1)+'s':'—';
+  document.getElementById('kpi-avg-response').textContent=avgResp;
+  // KPI 5 & 6: Thumbs
+  const fb=data.allFeedback||[];
+  document.getElementById('kpi-thumbs-up').textContent=fb.length?fb.filter(f=>f.rating==='up').length:'—';
+  document.getElementById('kpi-thumbs-down').textContent=fb.length?fb.filter(f=>['down','thumbs_down'].includes(f.rating)).length:'—';
   const prev=analytics;
   analytics=data;
-  renderTopQueries();renderPainPoints(zh,data.negFeedback||[]);renderBrandChart();renderTopDocs();renderSyncHealth();renderQueryLog();renderChangelog();
+  renderTopQueries();renderPainPoints(zh,data.negFeedback||[]);renderBrandChart();renderTopDocs();renderSyncHealth();renderQueryLog();renderFeedbackSummary();renderChangelog();
   analytics=prev;
   document.getElementById('con-last-sync').textContent=lastSyncMeta.time?new Date(lastSyncMeta.time).toLocaleString():'Never';
   document.getElementById('con-sync-type').textContent=lastSyncMeta.type||'—';
@@ -1453,18 +1478,28 @@ function renderConsoleWith(data){
 
 function renderTopQueries(){
   const freq={};
-  analytics.queries.forEach(q=>{const k=q.q.toLowerCase().trim();if(!freq[k])freq[k]={count:0,brand:q.brand,hits:q.hits};freq[k].count++;});
+  analytics.queries.forEach(q=>{
+    const k=q.q.toLowerCase().trim();
+    if(!freq[k])freq[k]={count:0,brand:q.brand,hits:q.hitsCount||q.hits||0,totalMs:0,respCount:0};
+    freq[k].count++;
+    freq[k].totalMs=(freq[k].totalMs||0)+(q.responseMs||0);
+    freq[k].respCount=(freq[k].respCount||0)+(q.responseMs>0?1:0);
+  });
   const sorted=Object.entries(freq).sort((a,b)=>b[1].count-a[1].count).slice(0,8);
   document.getElementById('tq-badge').textContent=analytics.queries.length+' total';
   if(!sorted.length){document.getElementById('top-queries-list').innerHTML='<div style="color:var(--text3);font-size:13px">No queries yet.</div>';return;}
   const max=sorted[0]?.[1].count||1;
-  document.getElementById('top-queries-list').innerHTML=`<table class="qt"><thead><tr><th>Query</th><th>Brand</th><th style="text-align:right">Count</th><th style="text-align:right">Hits</th></tr></thead><tbody>`+
-    sorted.map(([q,d])=>`<tr>
-      <td><div class="q-text" title="${esc(q)}">${esc(q)}</div><div class="q-bar" style="background:${BRANDS[d.brand]?.color||'#888'};width:${Math.round(d.count/max*100)}%;opacity:.4"></div></td>
-      <td><span class="q-brand" style="color:${BRANDS[d.brand]?.color||'#888'}">${d.brand||'All'}</span></td>
-      <td class="q-count">${d.count}</td>
-      <td class="q-hits ${d.hits===0?'q-hits-low':'q-hits-ok'}">${d.hits===0?'⚠ 0':d.hits}</td>
-    </tr>`).join('')+'</tbody></table>';
+  document.getElementById('top-queries-list').innerHTML=`<table class="qt"><thead><tr><th>Query</th><th>Brand</th><th style="text-align:right">Count</th><th style="text-align:right">Hits</th><th style="text-align:right">Resp</th></tr></thead><tbody>`+
+    sorted.map(([q,d])=>{
+      const avgResp=d.respCount>0?(d.totalMs/d.respCount/1000).toFixed(1)+'s':'—';
+      return`<tr>
+        <td><div class="q-text" title="${esc(q)}">${esc(q)}</div><div class="q-bar" style="background:${BRANDS[d.brand]?.color||'#888'};width:${Math.round(d.count/max*100)}%;opacity:.4"></div></td>
+        <td><span class="q-brand" style="color:${BRANDS[d.brand]?.color||'#888'}">${d.brand||'All'}</span></td>
+        <td class="q-count">${d.count}</td>
+        <td class="q-hits ${d.hits===0?'q-hits-low':'q-hits-ok'}">${d.hits===0?'⚠ 0':d.hits}</td>
+        <td style="text-align:right;color:var(--text3);font-size:11px">${avgResp}</td>
+      </tr>`;
+    }).join('')+'</tbody></table>';
 }
 
 function renderPainPoints(zh,negFb){
@@ -1521,16 +1556,49 @@ function renderSyncHealth(){
     </div>`).join('');
 }
 
+function renderFeedbackSummary(){
+  const fb=analytics.allFeedback||[];
+  const el=document.getElementById('feedback-summary-list');
+  const badge=document.getElementById('fb-badge');
+  if(!el)return;
+  badge.textContent=fb.length+' ratings';
+  if(!fb.length){el.innerHTML='<div style="color:var(--text3);font-size:13px">No feedback logged yet.</div>';return;}
+  const byAgent={};
+  fb.forEach(f=>{
+    const a=f.agentName||'Unknown';
+    if(!byAgent[a])byAgent[a]={up:0,down:0,notes:[]};
+    if(f.rating==='up')byAgent[a].up++;
+    else if(['down','thumbs_down'].includes(f.rating)){byAgent[a].down++;if(f.note)byAgent[a].notes.push(f.note);}
+  });
+  el.innerHTML=Object.entries(byAgent).map(([name,d])=>`
+    <div style="padding:9px 0;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:4px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span style="font-size:12px;font-weight:600;color:#fff;flex:1">${esc(name)}</span>
+        <span style="font-size:12px;color:var(--green)">👍 ${d.up}</span>
+        <span style="font-size:12px;color:var(--red)">👎 ${d.down}</span>
+      </div>
+      ${d.notes.map(n=>`<div style="font-size:11px;color:var(--text3);padding-left:4px">"${esc(n)}"</div>`).join('')}
+    </div>`).join('');
+}
+
 function renderQueryLog(){
   const recent=[...analytics.queries].reverse().slice(0,50);
-  if(!recent.length){document.getElementById('query-log-body').innerHTML='<tr><td colspan="4" style="color:var(--text3);padding:20px 0;text-align:center">No queries yet.</td></tr>';return;}
+  if(!recent.length){document.getElementById('query-log-body').innerHTML='<tr><td colspan="7" style="color:var(--text3);padding:20px 0;text-align:center">No queries yet.</td></tr>';return;}
   document.getElementById('log-badge').textContent=`Last ${Math.min(recent.length,50)}`;
-  document.getElementById('query-log-body').innerHTML=recent.map(q=>`<tr>
-    <td><span class="q-text" style="max-width:300px;display:inline-block">${esc(q.q)}</span></td>
-    <td><span style="color:${BRANDS[q.brand]?.color||'#888'};font-size:11px;font-weight:700">${q.brand||'All'}</span></td>
-    <td class="${q.hits===0?'q-hits-low':'q-hits-ok'}" style="text-align:right">${q.hits===0?'⚠ 0':q.hits}</td>
-    <td style="color:var(--text3);font-size:11px;text-align:right">${new Date(q.ts).toLocaleTimeString()}</td>
-  </tr>`).join('');
+  document.getElementById('query-log-body').innerHTML=recent.map(q=>{
+    const hits=q.hitsCount||q.hits||0;
+    const resp=q.responseMs>0?(q.responseMs/1000).toFixed(1)+'s':'—';
+    const agent=(q.agentName||'').substring(0,14);
+    return`<tr>
+      <td><span class="q-text" style="max-width:240px;display:inline-block">${esc(q.q)}</span></td>
+      <td style="color:var(--text2);font-size:11px">${esc(agent)}</td>
+      <td><span style="color:${BRANDS[q.brand]?.color||'#888'};font-size:11px;font-weight:700">${q.brand||'All'}</span></td>
+      <td class="${hits===0?'q-hits-low':'q-hits-ok'}" style="text-align:right">${hits===0?'⚠ 0':hits}</td>
+      <td style="text-align:right;color:var(--text3);font-size:11px">${resp}</td>
+      <td style="text-align:center;color:var(--text3);font-size:11px">${q.isFollowUp?'↩':''}</td>
+      <td style="color:var(--text3);font-size:11px;text-align:right">${new Date(q.ts).toLocaleTimeString()}</td>
+    </tr>`;
+  }).join('');
 }
 
 // ── BANNER ─────────────────────────────────────────────────
