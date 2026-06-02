@@ -279,7 +279,7 @@ col.col-rq-time{width:68px}
     </div>
     <div id="aip-left-border"></div>
     <div id="aip">
-      <div class="aihd" style="padding:10px 13px 9px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--text2);text-transform:uppercase;flex-shrink:0">AI Assistant</div>
+      <div class="aihd" style="padding:10px 13px 9px;border-bottom:1px solid var(--border);font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--text2);text-transform:uppercase;flex-shrink:0;display:flex;align-items:center;justify-content:space-between">AI Assistant<button onclick="clearChat()" style="background:none;border:none;font-size:11px;font-weight:500;color:var(--text3);cursor:pointer;padding:0;letter-spacing:0;text-transform:none" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--text3)'">New chat</button></div>
 
       <div id="msgs"><div class="msg msys">Ask me anything about DiabloSport, Edge, Superchips, or Range. I search your live SharePoint knowledgebase before answering.</div></div>
       <div id="aiw">
@@ -947,7 +947,7 @@ function startTour(){
 
   renderStep();
 }
-let allDocs=[...SEED_DOCS],activeBrand='all',aiOpen=true,activeDoc=null,currentRole='agent';
+let allDocs=[...SEED_DOCS],activeBrand='all',aiOpen=true,activeDoc=null,currentRole='agent',chatHistory=[];
 let deltaTokens={},lastSyncMeta={};
 let analytics={queries:[],docViews:[],sessionStart:new Date()};
 
@@ -1340,6 +1340,7 @@ function logSearchClick(docId,docName,brand){
 // ── AI ─────────────────────────────────────────────────────
 function toggleAI(){aiOpen=!aiOpen;document.getElementById('aip').classList.toggle('closed',!aiOpen);}
 function aiKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ask();}}
+function clearChat(){document.getElementById('msgs').innerHTML='<div class="msg msys">Ask me anything about DiabloSport, Edge, Superchips, or Range. I search your live SharePoint knowledgebase before answering.</div>';chatHistory=[];queryIndexInSession=0;}
 function askAbout(doc){if(!aiOpen)toggleAI();document.getElementById('aii').value=`Tell me about: ${doc.name.replace(/\.pdf$/i,'')}`;ask();}
 
 function mdToHtml(text){
@@ -1419,7 +1420,7 @@ Rules:
 - If the query is ambiguous (e.g. no vehicle year/make specified), ask one clarifying question before answering`;
   try{
     const fetchStart=Date.now();
-    const res=await fetch('https://cshelper-proxy.zwhill.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,system:sys,messages:[{role:'user',content:q}]})});
+    const res=await fetch('https://cshelper-proxy.zwhill.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,system:sys,messages:[...chatHistory,{role:'user',content:q}]})});
     const responseMs=Date.now()-fetchStart;
     const data=await res.json();
     const text=data.content?.find(b=>b.type==='text')?.text||'No response.';
@@ -1427,6 +1428,9 @@ Rules:
     if(hits.length){const pills=hits.slice(0,4).map(h=>{const bc=BRANDS[h.brand]?.color||'#888';const label=esc((h.name||'').replace(/\.pdf$/i,'').substring(0,32));return`<span class="cite-pill" onclick="openDoc('${escId(h.id)}')" style="border-color:${bc}44" title="${esc(h.name||'')}"><svg width="10" height="10" viewBox="0 0 16 16" fill="none" style="flex-shrink:0"><rect x="2" y="1" width="12" height="14" rx="2" stroke="${bc}" stroke-width="1.5"/><line x1="5" y1="5" x2="11" y2="5" stroke="${bc}" stroke-width="1.2"/><line x1="5" y1="8" x2="11" y2="8" stroke="${bc}" stroke-width="1.2"/><line x1="5" y1="11" x2="8" y2="11" stroke="${bc}" stroke-width="1.2"/></svg>${label}</span>`;}).join(' ');html+=`<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:5px">${pills}</div>`;}
     loadingMsg.innerHTML=html;
     lastQuery=q;lastHitsCount=hits.length;lastHitsIds=hitsIds;lastResponseMs=responseMs;
+    chatHistory.push({role:'user',content:q});
+    chatHistory.push({role:'assistant',content:text});
+    if(chatHistory.length>20)chatHistory=chatHistory.slice(chatHistory.length-20);
     logQuery(q,activeBrand,hits.length,hitsIds,responseMs,isFollowUp,queryIndexInSession);
     addFeedback(loadingMsg,q,activeBrand,text);
     addEscalateBtn(loadingMsg,text);
