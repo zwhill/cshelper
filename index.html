@@ -370,8 +370,13 @@ col.col-rq-time{width:68px}
 
 <script>
 // ── CONFIG ─────────────────────────────────────────────────
-const VERSION = '1.2.11';
+const VERSION = '1.2.12';
 const CHANGELOG = [
+  {
+    version: '1.2.12', date: 'Jun 1, 2026', title: 'Smarter doc retrieval + upgraded system prompt',
+    userItems: ['AI answers now draw from a wider pool of relevant documents'],
+    adminItems: ['Multi-signal scoring replaces simple includes() filter — top 8 docs by score', 'System prompt upgraded: brand/product reference, rules block, ambiguity clarification instruction'],
+  },
   {
     version: '1.2.11', date: 'Jun 1, 2026', title: 'Tour rewrite + admin modal',
     userItems: ['First-run tour updated with clearer descriptions and a better feedback step'],
@@ -1370,10 +1375,48 @@ async function ask(){
   inp.value='';document.getElementById('ais').disabled=true;
   addMsg('user',esc(q));
   const loadingMsg=addMsg('ai','<em style="color:var(--text3)">Searching knowledgebase…</em>');
-  const hits=allDocs.filter(d=>(d.name.toLowerCase().includes(q.toLowerCase())||(d.snippet||'').toLowerCase().includes(q.toLowerCase()))).slice(0,6);
+  const q_lower = q.toLowerCase();
+  const q_words = q_lower.split(/\s+/).filter(w => w.length > 2);
+
+  const scored = allDocs.map(d => {
+    const name_l = (d.name || '').toLowerCase();
+    const snip_l = (d.snippet || '').toLowerCase();
+    const brand_l = (d.brand || '').toLowerCase();
+    let score = 0;
+    if (name_l.includes(q_lower)) score += 10;
+    if (snip_l.includes(q_lower)) score += 5;
+    q_words.forEach(w => { if (name_l.includes(w)) score += 3; });
+    q_words.forEach(w => { if (snip_l.includes(w)) score += 1; });
+    if (q_lower.includes(brand_l)) score += 2;
+    return { ...d, _score: score };
+  }).filter(d => d._score > 0).sort((a, b) => b._score - a._score);
+
+  const hits = scored.slice(0, 8);
   const hitsIds=hits.map(h=>h.id).join(',');
-  const docCtx=hits.map(h=>`[${h.name?.replace(/\.pdf$/i,'')}]: ${h.snippet||''}`).join('\n');
-  const sys=`You are an expert technical customer support assistant for Holley's automotive tuning brands: DiabloSport, Edge Products, Superchips, and Range Technology.\n\nRelevant knowledgebase documents:\n${docCtx||'No specific matches — use general brand knowledge.'}\n\nAnswer directly and practically. Name specific documents when relevant. Step-by-step for procedures. Under 200 words unless a procedure requires more. You are helping a tech support professional — be precise.`;
+
+  const brandProductMap = `
+DiabloSport: inTune i3, Trinity 2 (T2), Trinity T2X, Predator 2, Predator 3 (i2/i3)
+Edge Products: Insight CTS3, Pulsar, Pulsar LT, EvoHT, EAS sensors, Revolver (legacy)
+Superchips: Flashpaq F5, TrailDash 2, Dashpaq+
+Range Technology: AFM/DFM disablers (RA003, RA007, RA009, RA070), Active Fuel Management modules`;
+
+  const sys = `You are an expert technical customer support assistant for Holley's automotive tuning brands: DiabloSport, Edge Products, Superchips, and Range Technology. You are helping a professional CS technician — be direct, precise, and practical.
+
+Brand and product reference:
+${brandProductMap}
+
+Relevant knowledgebase documents:
+${hits.length > 0
+  ? hits.map(d => `• [${d.brand}] ${d.name}${d.snippet ? ' — ' + d.snippet : ''}`).join('\n')
+  : 'No specific matches found — answer from general brand knowledge and flag if uncertain.'}
+
+Rules:
+- Always name the specific document you are drawing from when answering
+- If the answer requires steps, use a numbered list
+- If you are not confident, say so clearly — do not guess on compatibility or technical specs
+- Never suggest emissions defeat devices or non-compliant tuning configurations
+- Keep responses under 200 words unless a procedure genuinely requires more
+- If the query is ambiguous (e.g. no vehicle year/make specified), ask one clarifying question before answering`;
   try{
     const fetchStart=Date.now();
     const res=await fetch('https://cshelper-proxy.zwhill.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:1000,system:sys,messages:[{role:'user',content:q}]})});
