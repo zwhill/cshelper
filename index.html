@@ -1214,11 +1214,16 @@ function localSearch(q){
   const box=document.getElementById('sr');
   logSearch(q, res.length);
   if(!res.length){box.style.display='none';return;}
-  box.innerHTML=res.map(d=>`<div class="sri" onclick="logSearchClick('${escId(d.id)}',${JSON.stringify(d.name)},${JSON.stringify(d.brand)});openDoc('${escId(d.id)}');clearSearch()">
+  box.innerHTML=res.map(d=>`<div class="sri" data-id="${escId(d.id)}">
     <div class="st">${esc(d.name.replace(/\.pdf$/i,''))}</div>
     <div class="sm" style="color:${BRANDS[d.brand]?.color||'#888'}">${d.brand}</div>
     ${d.snippet?`<div class="ss">${esc(d.snippet.substring(0,80))}…</div>`:''}
   </div>`).join('');
+  box.querySelectorAll('.sri').forEach(el=>{
+    const doc=res.find(d=>String(d.id)===el.dataset.id);
+    if(!doc)return;
+    el.addEventListener('click',()=>{logSearchClick(doc.id,doc.name,doc.brand);openDoc(doc.id);clearSearch();});
+  });
   box.style.display='block';
 }
 function clearSearch(){document.getElementById('gs').value='';document.getElementById('sr').style.display='none';}
