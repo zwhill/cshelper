@@ -1787,15 +1787,19 @@ async function ask(){
   const hits = scored.slice(0, 8);
   const hitsIds=hits.map(h=>h.id).join(',');
 
+  const brandProductMap = `DiabloSport: inTune i3, Trinity 2 (T2), Trinity T2X, Predator 2, Predator X, Pulsar (inline GM), Pulsar LT (inline GM)
+Edge Products: Insight CTS3, Insight CTS2, Insight CS2, Insight Pro, Evolution CTS3, Diesel/Gas Evolution CS/CTS/CTS2/CTS3, Juice with Attitude (JWA), Pulsar (inline GM), EvoHT, Amp'd Throttle Booster, EAS sensors
+Superchips: Flashpaq F5/F4, FlashCal F5 (Jeep/Truck), TrailDash 3/2, Dashpaq+, Pulsar LT (RAM inline), Pulsar (Jeep/Duramax inline), Amp'd 2.0, Cortex, SCR, TrailCal
+Range Technology: RA003, RA007, RA009, RA070 (AFM/DFM disablers for GM trucks)`;
   const sys = `You are an expert technical customer support assistant for Holley's automotive tuning brands: DiabloSport, Edge Products, Superchips, and Range Technology. You are helping a professional CS technician — be direct, precise, and practical.
 
-Baked-in knowledge map (use this when retrieval docs are sparse):
-${KNOWLEDGE_BLOCK}
+Brand and product reference:
+${brandProductMap}
 
 Relevant knowledgebase documents:
 ${hits.length > 0
   ? hits.map(d => `• [${d.brand}] ${d.name}${d.snippet ? ' — ' + d.snippet : ''}`).join('\n')
-  : 'No specific matches found — use knowledge map above and flag if uncertain.'}
+  : 'No specific matches found — answer from general brand knowledge and flag if uncertain.'}
 
 Rules:
 - Always name the specific document you are drawing from when answering
