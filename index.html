@@ -246,6 +246,7 @@ col.col-rq-time{width:68px}
     <span id="user-name">CS Agent</span>
     <span class="role-badge role-agent" id="role-badge">Agent</span>
   </div>
+  <button id="admin-exit-btn" onclick="exitAdmin()" style="display:none;background:none;border:1px solid var(--border2);border-radius:var(--rsm);padding:4px 10px;font-size:11px;color:var(--text3);cursor:pointer;white-space:nowrap;transition:color .15s,border-color .15s" onmouseover="this.style.color='var(--red)';this.style.borderColor='var(--red)'" onmouseout="this.style.color='var(--text3)';this.style.borderColor='var(--border2)'">Exit admin</button>
 </div>
 
 <div id="app">
@@ -449,7 +450,7 @@ const CHANGELOG = [
     tags: ['feature', 'infra']
   }
 ];
-const ADMIN_PASSWORD = 'holley2025'; // Change before deploying
+const ADMIN_PASSWORD = 'holley2025'; // POC only — localStorage key cs_kb_admin persists admin role per device
 const DRIVE_ID = 'b!EfZxkrs-dEGVFhCFYOUKwmSNQKpiLb5MpRWvv3Vv30zqJE9Ptb93TYuxqw9XdR20';
 const FOLDER_IDS = {
   DiabloSport:'01HMZLDOHDRBCHZWFKXFFYWWAQGGPIYI4K',
@@ -952,10 +953,50 @@ let analytics={queries:[],docViews:[],sessionStart:new Date()};
 
 // ── ADMIN ──────────────────────────────────────────────────
 function promptAdminAccess(){
-  const pw=prompt('Enter admin password:');
-  if(!pw)return;
-  if(pw===ADMIN_PASSWORD){currentRole='admin';applyRoleUI();showBanner('ok','✓ Admin access unlocked.');}
-  else showBanner('err','✗ Incorrect password.');
+  if(document.getElementById('admin-modal-overlay'))return;
+  const overlay=document.createElement('div');
+  overlay.id='admin-modal-overlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;display:flex;align-items:center;justify-content:center';
+  overlay.innerHTML=`<div style="background:var(--surface);border:1px solid var(--border2);border-radius:var(--radius,8px);padding:28px 26px;width:min(360px,90vw);display:flex;flex-direction:column;gap:16px;position:relative">
+    <div style="font-size:15px;font-weight:700;color:#fff">Admin Access</div>
+    <input id="admin-pw-input" type="password" placeholder="Enter password" autocomplete="current-password"
+      style="background:var(--surface2);border:1px solid var(--border2);border-radius:var(--rsm);padding:9px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none;width:100%;box-sizing:border-box"/>
+    <label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text2);cursor:pointer;user-select:none">
+      <input type="checkbox" id="admin-remember" checked style="accent-color:var(--red);cursor:pointer"/> Remember me on this device
+    </label>
+    <span id="admin-err" style="font-size:12px;color:var(--red);display:none">Incorrect password</span>
+    <div style="display:flex;gap:10px">
+      <button id="admin-unlock-btn" style="flex:1;background:var(--red);border:none;border-radius:var(--rsm);color:#fff;padding:10px;font-size:13px;font-weight:700;cursor:pointer">Unlock</button>
+      <button onclick="document.getElementById('admin-modal-overlay').remove()" style="background:none;border:1px solid var(--border2);border-radius:var(--rsm);color:var(--text3);padding:10px 18px;font-size:13px;cursor:pointer">Cancel</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  const inp=document.getElementById('admin-pw-input');
+  const btn=document.getElementById('admin-unlock-btn');
+  const err=document.getElementById('admin-err');
+  const attempt=()=>{
+    const pw=inp.value;
+    if(pw===ADMIN_PASSWORD){
+      if(document.getElementById('admin-remember').checked)localStorage.setItem('cs_kb_admin','1');
+      currentRole='admin';applyRoleUI();showBanner('ok','✓ Admin access unlocked.');
+      overlay.remove();
+    } else {
+      err.style.display='';
+      inp.style.borderColor='var(--red)';
+      inp.classList.add('shake');setTimeout(()=>{inp.classList.remove('shake');inp.style.borderColor='';},400);
+      inp.value='';inp.focus();
+    }
+  };
+  btn.addEventListener('click',attempt);
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')attempt();});
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+  inp.focus();
+}
+function exitAdmin(){
+  localStorage.removeItem('cs_kb_admin');
+  currentRole='agent';
+  applyRoleUI();
+  showBanner('info','Signed out of admin.');
 }
 function applyRoleUI(){
   const isAdmin=currentRole==='admin';
@@ -966,6 +1007,8 @@ function applyRoleUI(){
   document.getElementById('tab-console').style.display=isAdmin?'':'none';
   document.getElementById('tab-todo').style.display=isAdmin?'':'none';
   document.getElementById('user-chip').style.cursor=isAdmin?'default':'pointer';
+  const exitBtn=document.getElementById('admin-exit-btn');
+  if(exitBtn)exitBtn.style.display=isAdmin?'':'none';
   if(!isAdmin&&(activeTabId==='console'||activeTabId==='todo'))switchTab('kb');
 }
 
@@ -2044,6 +2087,7 @@ function openFeedbackPanel(){
 document.getElementById('sidebar-toggle').style.left='196px';
 const savedName=localStorage.getItem('cs_kb_agent_name');
 if(savedName){agentName=savedName;document.getElementById('user-name').textContent=savedName;document.getElementById('name-modal-overlay').remove();gasLog('Sessions',[new Date().toISOString(),sessionId,agentName,(window.innerWidth<=768?'mobile':'desktop'),VERSION]);}
+if(localStorage.getItem('cs_kb_admin')==='1'){currentRole='admin';applyRoleUI();}
 loadSyncState();
 updateSyncFooter();
 updateCounts();

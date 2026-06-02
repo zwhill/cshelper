@@ -74,6 +74,8 @@ Fires-and-forgets to GAS via Cloudflare Worker proxy. `sessionId` generated once
 
 **Manual steps required:** Create `Sessions`, `FeedbackGeneral` sheets in Google Sheet with correct headers (see schema above).
 
+**Admin login:** `promptAdminAccess()` now opens an in-app modal (password input + "Remember me" checkbox) instead of `prompt()`. On successful login with "Remember me" checked, `localStorage.setItem('cs_kb_admin','1')` persists admin across page loads. On init, `cs_kb_admin` is checked and `applyRoleUI()` called immediately if set. `exitAdmin()` clears the key and drops back to agent role — triggered by "Exit admin" button in the topbar (visible only when admin).
+
 Feedback buttons (header topbar + doc viewer bottom bar) use an outlined accent style: `1.5px solid var(--red)`, transparent background, red text, fills red on hover. Rating values corrected to `'up'` / `'down'` (was `thumbs_up` / `thumbs_down`). Console filter accepts both for backward compatibility.
 
 CHANGELOG entries now have two item arrays: `userItems` (plain-language, shown to agents) and `adminItems` (technical, shown to admins). Both `renderChangelog()` and `openChangelog()` conditionally render based on `currentRole === 'admin'`.
