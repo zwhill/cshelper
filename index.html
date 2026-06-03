@@ -2116,7 +2116,8 @@ function checkForUpdate(){
   fetch('https://zwhill.github.io/cshelper/version.json?_='+Date.now())
     .then(r=>r.json())
     .then(data=>{
-      if(!data.version||data.version===VERSION)return;
+      const baseVersion = VERSION.split('-')[0];
+      if(!data.version||data.version===VERSION||data.version===baseVersion)return;
       if(document.getElementById('update-toast'))return;
       const t=document.createElement('div');
       t.id='update-toast';
