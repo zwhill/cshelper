@@ -1711,8 +1711,10 @@ function openFbModal(fbId){
     // FeedbackAI: [ts,sessionId,agentName,query,browseBrandFilter,aiResponse,rating,freeText,queryIndexInSession,platform,currentDocId,currentDocName,hitsCount,hitsIds,responseMs]
     gasLog('FeedbackAI',[new Date().toISOString(),sessionId,agentName,q,brand,ai,'down',freeText,qi,(window.innerWidth<=768?'mobile':'desktop'),currentDocId||'',currentDocName||'',lastHitsCount,lastHitsIds,lastResponseMs]);
     if(row){const done=document.createElement('span');done.className='fb-done';done.textContent=' Logged — thanks';row.appendChild(done);}
+    document.getElementById(fbId+'_down')?.classList.remove('active-down');
     overlay.remove();
   });
+  overlay.addEventListener('click',e=>{if(e.target===overlay){overlay.remove();document.getElementById(fbId+'_down')?.classList.remove('active-down');}});
 }
 
 // ── GOOGLE APPS SCRIPT LOGGING ──────────────────────────────
