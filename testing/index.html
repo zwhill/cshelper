@@ -2127,8 +2127,16 @@ function checkForUpdate(){
   fetch('https://zwhill.github.io/cshelper/version.json?_='+Date.now())
     .then(r=>r.json())
     .then(data=>{
-      const baseVersion = VERSION.split('-')[0];
-      if(!data.version||data.version===VERSION||data.version===baseVersion)return;
+      if(!data.version)return;
+      const baseVersion=VERSION.split('-')[0];
+      // On live builds: toast when version.json differs from current version.
+      // On beta builds: only toast if live has a version the beta doesn't yet include
+      // (i.e. live version is strictly newer than this beta's base version).
+      const liveparts=data.version.split('.').map(Number);
+      const baseparts=baseVersion.split('.').map(Number);
+      const liveIsNewer=(()=>{for(let i=0;i<3;i++){const l=liveparts[i]||0,b=baseparts[i]||0;if(l>b)return true;if(l<b)return false;}return false;})();
+      if(IS_TESTING&&!liveIsNewer)return;
+      if(!IS_TESTING&&(data.version===VERSION||data.version===baseVersion))return;
       if(document.getElementById('update-toast'))return;
       const t=document.createElement('div');
       t.id='update-toast';
