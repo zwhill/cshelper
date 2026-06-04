@@ -64,7 +64,7 @@ Client-side retrieval + LLM. Filters `allDocs` for matches, builds a system prom
 Fires-and-forgets to GAS via Cloudflare Worker proxy. `sessionId` generated once per page load via `crypto.randomUUID()`. `aiCtx` fully removed — `browseBrandFilter` (value of `activeBrand` at query time) is used instead. Sheet schemas:
 
 - **Sessions**: `[ts, sessionId, agentName, platform, appVersion]` — fired once after name is set.
-- **AIQueries**: `[ts, sessionId, agentName, query, browseBrandFilter, hitsCount, hitsIds, responseMs, isFollowUp, queryIndex]`
+- **AIQueries**: `[ts, sessionId, agentName, query, browseBrandFilter, hitsCount, hitsIds, responseMs, isFollowUp, queryIndex, aiResponse]`
 - **DocViews**: `[ts, sessionId, agentName, docName, brand, docType]`
 - **Searches**: `[ts, sessionId, agentName, searchTerm, resultCount, eventType]` — eventType is `search` or `search_click`
 - **FeedbackAI** (renamed from Feedback): `[ts, sessionId, agentName, query, browseBrandFilter, aiResponse, rating, freeText, queryIndexInSession, platform, currentDocId, currentDocName, hitsCount, hitsIds, responseMs]`
@@ -110,7 +110,7 @@ Brand keys (`DiabloSport`, `Edge`, `Superchips`, `Range`, `Training`) are used a
 
 ## Current Version
 
-<!-- VERSION --> 1.3.3
+<!-- VERSION --> 1.4.1-beta
 
 This line must stay in sync with `const VERSION` in `index.html` and `version.json` in the repo root. All three update together in every commit.
 
@@ -132,6 +132,10 @@ This line must stay in sync with `const VERSION` in `index.html` and `version.js
 - Citation pills in AI responses — inline `.cite-pill` elements after each AI reply, clicking opens SharePoint embed modal
 - Revision history card in console — versioned CHANGELOG constant, rendered on console open with tags and timeline dots
 - Version number in sidebar footer is clickable — opens revision history in the doc modal
+- Pain Points card redesigned: three sub-tabs (unresolved, negative feedback, escalated), stats strip, clickable rows with detail modal
+- Recent Queries card redesigned: brand filter bar, text filter, inline docs bar, response time coloring, feedback dot, clickable rows with full detail modal
+- Console defaults to All Time on load
+- aiResponse now logged in AIQueries sheet at query time
 
 ---
 
