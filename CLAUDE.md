@@ -110,7 +110,7 @@ Brand keys (`DiabloSport`, `Edge`, `Superchips`, `Range`, `Training`) are used a
 
 ## Current Version
 
-<!-- VERSION --> 1.4.1-beta
+<!-- VERSION --> 1.4.1
 
 This line must stay in sync with `const VERSION` in `index.html` and `version.json` in the repo root. All three update together in every commit.
 
@@ -133,9 +133,12 @@ This line must stay in sync with `const VERSION` in `index.html` and `version.js
 - Revision history card in console — versioned CHANGELOG constant, rendered on console open with tags and timeline dots
 - Version number in sidebar footer is clickable — opens revision history in the doc modal
 - Pain Points card redesigned: three sub-tabs (unresolved, negative feedback, escalated), stats strip, clickable rows with detail modal
-- Recent Queries card redesigned: brand filter bar, text filter, inline docs bar, response time coloring, feedback dot, clickable rows with full detail modal
+- Recent Queries card redesigned: sessions grouped by sessionId, brand filter, text filter, turn count, feedback dot; clickable rows open full session conversation modal
+- Session conversation modal: full back-and-forth thread with per-turn docs injected, response time, query index, feedback rating and note; platform + session ID in header/footer
 - Console defaults to All Time on load
-- aiResponse now logged in AIQueries sheet at query time
+- aiResponse now logged in AIQueries sheet at query time (requires `aiResponse` header added to col K in AIQueries Google Sheet)
+- Thumbs-down modal fixed: backdrop click now closes overlay (was silently blocking all subsequent clicks)
+- Beta build indicators: BETA tag in topbar + orange topbar border when VERSION includes "beta"; version polling uses semver comparison so beta builds don't trigger stale update toasts
 
 ---
 
