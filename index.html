@@ -2033,33 +2033,29 @@ function renderRecentQueries(data){
       <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap">
         ${brands.map(b=>`<button data-rq-brand="${b.toLowerCase()}" style="padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid ${(brandFilter===b.toLowerCase()||(!brandFilter&&b==='All'))?'var(--red)':'var(--border2)'};background:${(brandFilter===b.toLowerCase()||(!brandFilter&&b==='All'))?'var(--red)':'transparent'};color:${(brandFilter===b.toLowerCase()||(!brandFilter&&b==='All'))?'#fff':'var(--text3)'};transition:all .15s">${b}</button>`).join('')}
       </div>
-      <table style="width:100%;border-collapse:collapse;font-size:12px">
-        <thead><tr style="border-bottom:1px solid var(--border2)">
-          <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600;min-width:180px">Query / Response</th>
-          <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Agent</th>
-          <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Brand</th>
-          <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Docs used</th>
-          <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Resp. time</th>
-          <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Feedback</th>
-          <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Time</th>
-        </tr></thead>
-      </table>
       <div class="rq-scroll">
         <table style="width:100%;border-collapse:collapse;font-size:12px">
-          <tbody>${rows.slice(0,10).map((q,i)=>{
+          <thead><tr style="border-bottom:1px solid var(--border2);position:sticky;top:0;background:var(--surface);z-index:1">
+            <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Query / Response</th>
+            <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600;white-space:nowrap">Agent</th>
+            <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Brand</th>
+            <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600;white-space:nowrap">Docs</th>
+            <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600;white-space:nowrap">Resp.</th>
+            <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">FB</th>
+            <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600;white-space:nowrap">Time</th>
+          </tr></thead>
+          <tbody>${rows.map((q,i)=>{
             const qText=q.query||q.q||'';
             const agent=q.agentName||q.agent||agentName||'—';
             const brand=q.brand||q.browseBrandFilter||'';
             const hits=q.hitsCount??q.hits??0;
             const ms=q.responseMs??undefined;
             const ts=q.ts?new Date(q.ts).toLocaleString():'—';
-            const isFollowUp=q.isFollowUp===true||q.isFollowUp==='true';
             const aiSnippet=(q.aiResponse||'').slice(0,120).trim();
             return`<tr data-rq-idx="${i}" style="border-bottom:1px solid var(--border2);cursor:pointer" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
-              <td style="padding:7px 8px;max-width:240px">
+              <td style="padding:7px 8px;max-width:220px">
                 <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600" title="${esc(qText)}">${esc(qText)||'—'}</div>
                 ${aiSnippet?`<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text3);font-size:11px;margin-top:2px" title="${esc(q.aiResponse||'')}">${esc(aiSnippet)}${(q.aiResponse||'').length>120?'…':''}</div>`:''}
-                ${isFollowUp?'<span style="font-size:9px;background:#1a2a1a;color:#4caf50;border:1px solid #2a4a2a;border-radius:3px;padding:1px 5px;margin-top:2px;display:inline-block">follow-up</span>':''}
               </td>
               <td style="padding:7px 8px;color:var(--text2);white-space:nowrap">${esc(agent)}</td>
               <td style="padding:7px 8px">${brandTag(brand)}</td>
@@ -2071,12 +2067,8 @@ function renderRecentQueries(data){
           }).join('')}</tbody>
         </table>
       </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border2)">
-        <span style="font-size:12px;color:var(--text3)">Showing ${Math.min(rows.length,10)} of ${rows.length}</span>
-        <div style="display:flex;gap:4px">
-          <button style="padding:4px 10px;font-size:11px;border:1px solid var(--border2);border-radius:4px;background:transparent;color:var(--text3);cursor:pointer">‹ Prev</button>
-          <button style="padding:4px 10px;font-size:11px;border:1px solid var(--border2);border-radius:4px;background:transparent;color:var(--text3);cursor:pointer">Next ›</button>
-        </div>
+      <div style="padding-top:8px;border-top:1px solid var(--border2);margin-top:8px">
+        <span style="font-size:12px;color:var(--text3)">${rows.length} rows</span>
       </div>
     `;
     document.getElementById('rq-filter')?.addEventListener('input',e=>{textFilter=e.target.value;render();attachHandlers();});
@@ -2149,10 +2141,19 @@ function openQueryModal(q,data){
           :`<div style="font-size:12px;color:var(--text3)">${hits} doc${hits!==1?'s':''} used (IDs: ${esc(hitsIdsStr||'—')})</div>`
       }
     </div>
-    ${aiResp?`<div style="margin-bottom:16px">
-      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;font-weight:600">AI Response</div>
-      <div style="background:var(--surface2);border-radius:6px;padding:12px;font-size:12px;color:var(--text2);max-height:180px;overflow-y:auto;line-height:1.6;white-space:pre-wrap">${esc(aiResp)}</div>
-    </div>`:''}
+    <div style="margin-bottom:16px">
+      <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;font-weight:600">Conversation</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;gap:8px;align-items:flex-start">
+          <span style="font-size:10px;font-weight:700;color:var(--text3);padding-top:3px;flex-shrink:0;min-width:32px">YOU</span>
+          <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:10px 12px;font-size:13px;color:var(--text);line-height:1.5;flex:1">${esc(qText)||'—'}</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-start">
+          <span style="font-size:10px;font-weight:700;color:var(--red);padding-top:3px;flex-shrink:0;min-width:32px">AI</span>
+          <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:10px 12px;font-size:13px;color:var(--text2);line-height:1.6;white-space:pre-wrap;flex:1">${aiResp?esc(aiResp):'<em style="color:var(--text3)">Response not recorded — only available for queries made after v1.4.1</em>'}</div>
+        </div>
+      </div>
+    </div>
     <div style="margin-bottom:16px">
       <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;font-weight:600">Agent Feedback</div>
       ${feedbackMatch
@@ -2229,17 +2230,15 @@ function renderPainPoints(data){
 
   function renderTable(rows,type){
     if(!rows.length)return`<div style="text-align:center;padding:32px;color:var(--text3);font-size:13px">No entries</div>`;
-    return`<table style="width:100%;border-collapse:collapse;font-size:12px">
-      <thead><tr style="border-bottom:1px solid var(--border2)">
+    return`<div class="rq-scroll"><table style="width:100%;border-collapse:collapse;font-size:12px">
+      <thead><tr style="border-bottom:1px solid var(--border2);position:sticky;top:0;background:var(--surface);z-index:1">
         <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Query</th>
         <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Agent</th>
         <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Brand</th>
-        <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Time</th>
+        <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600;white-space:nowrap">Time</th>
         <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Type</th>
       </tr></thead>
-    </table>
-    <div class="rq-scroll"><table style="width:100%;border-collapse:collapse;font-size:12px">
-      <tbody>${rows.slice(0,10).map((r,i)=>{
+      <tbody>${rows.map((r,i)=>{
         const q=r.query||r.q||'';
         const agent=r.agentName||r.agent||'—';
         const brand=r.brand||r.browseBrandFilter||'all';
