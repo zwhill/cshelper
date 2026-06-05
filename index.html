@@ -2089,20 +2089,31 @@ function openSessionModal(turns,data){
   const ts=first.ts?new Date(first.ts).toLocaleString():'—';
   const brandMap={DiabloSport:'diablo',Edge:'edge',Superchips:'superchips',Range:'range'};
 
-  const conversationHtml=turns.map(t=>{
+  const platform=first.platform||'—';
+  const conversationHtml=turns.map((t,ti)=>{
     const qText=t.query||t.q||'';
     const aiResp=t.aiResponse||'';
     const hits=t.hitsCount??t.hits??0;
     const ms=t.responseMs??null;
     const msLabel=ms===null?'—':ms<1000?ms+'ms':(ms/1000).toFixed(1)+'s';
     const msColor=ms===null?'var(--text3)':ms<2000?'#4caf50':ms<3500?'#ffaa44':'var(--red)';
+    const hitsColor=hits===0?'var(--red)':hits>=3?'#4caf50':'#888';
+    const hitsIdsStr=t.hitsIds||'';
+    const matchedDocs=hitsIdsStr?hitsIdsStr.split(',').map(id=>allDocs.find(d=>String(d.id)===String(id).trim())).filter(Boolean):[];
     const fbMatch=(data.allFeedback||[]).find(f=>(f.query||f.q||'')===qText&&(f.agentName||f.agent||'')===agent);
+    const queryIndex=t.queryIndex??t.queryIndexInSession??ti+1;
     return`
       <div style="display:flex;gap:8px;align-items:flex-start">
         <span style="font-size:10px;font-weight:700;color:var(--text3);padding-top:4px;flex-shrink:0;width:44px;text-align:right">${esc(agent)}</span>
         <div style="flex:1">
           <div style="background:var(--surface2);border:1px solid var(--border2);border-radius:6px 6px 6px 2px;padding:9px 12px;font-size:13px;color:var(--text);line-height:1.5">${esc(qText)||'—'}</div>
-          <div style="font-size:10px;color:var(--text3);margin-top:3px;padding-left:2px">${hits} doc${hits!==1?'s':''} · <span style="color:${msColor}">${msLabel}</span>${fbMatch?(fbMatch.rating==='up'||fbMatch.rating==='thumbs_up')?' · <span style="color:#4caf50">👍</span>':' · <span style="color:var(--red)">👎</span>':''}</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:10px;color:var(--text3);margin-top:4px;padding-left:2px;align-items:center">
+            <span style="color:${hitsColor}">📄 ${hits} doc${hits!==1?'s':''}</span>
+            <span style="color:${msColor}">⏱ ${msLabel}</span>
+            <span>#${queryIndex} in session</span>
+            ${fbMatch?(fbMatch.rating==='up'||fbMatch.rating==='thumbs_up')?'<span style="color:#4caf50">👍 Helpful</span>':'<span style="color:var(--red)">👎 Not helpful</span>':''}
+          </div>
+          ${matchedDocs.length?`<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:6px;padding-left:2px">${matchedDocs.map(d=>`<span style="font-size:10px;background:var(--surface2);border:1px solid var(--border2);border-radius:3px;padding:1px 6px;color:var(--text3)">${esc(d.name)}</span>`).join('')}</div>`:hits===0?'<div style="font-size:10px;color:var(--red);margin-top:4px;padding-left:2px">No docs matched</div>':''}
         </div>
       </div>
       <div style="display:flex;gap:8px;align-items:flex-start">
@@ -2114,26 +2125,30 @@ function openSessionModal(turns,data){
         <div style="background:#2a1a1a;border:1px solid #5a2a2a;border-radius:6px;padding:7px 10px;font-size:12px;color:#ff9999;flex:1">💬 ${esc(fbMatch.freeText||fbMatch.note)}</div>
       </div>`:''}
     `;
-  }).join('<div style="height:6px"></div>');
+  }).join('<div style="height:8px;border-left:2px solid var(--border2);margin-left:22px"></div>');
 
   const overlay=document.createElement('div');
   overlay.id='rq-modal-overlay';
   overlay.className='detail-modal-overlay';
   overlay.innerHTML=`<div class="detail-modal-panel">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px">
       <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <span class="brand-tag${brand?' '+(brandMap[brand]||''):''}" style="font-size:10px;padding:2px 6px">${brand||'all'}</span>
         <span style="font-size:13px;font-weight:700;color:var(--text)">${esc(agent)}</span>
         <span style="font-size:12px;color:var(--text3)">${ts}</span>
-        <span style="font-size:11px;color:var(--text3)">${turns.length} turn${turns.length!==1?'s':''}</span>
       </div>
       <button onclick="document.getElementById('rq-modal-overlay').remove()" style="background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;flex-shrink:0;line-height:1">✕</button>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+      <span style="padding:3px 9px;border-radius:4px;font-size:11px;background:var(--surface2);color:var(--text2);border:1px solid var(--border2)">📱 ${esc(platform)}</span>
+      <span style="padding:3px 9px;border-radius:4px;font-size:11px;background:var(--surface2);color:var(--text2);border:1px solid var(--border2)">${turns.length} turn${turns.length!==1?'s':''}</span>
     </div>
     <div style="display:flex;flex-direction:column;gap:10px">
       ${conversationHtml}
     </div>
     <div style="border-top:1px solid var(--border2);padding-top:10px;margin-top:16px">
-      <span style="font-size:10px;color:var(--text3);font-family:monospace">${esc(sessionIdVal)}</span>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.04em">Session ID</div>
+      <div style="font-size:11px;font-family:monospace;color:var(--text2);word-break:break-all">${esc(sessionIdVal)}</div>
     </div>
   </div>`;
   document.body.appendChild(overlay);
