@@ -1898,7 +1898,7 @@ function normalizeGasData(sheets){
   const rows=arr=>safe(arr).slice(1).filter(r=>Array.isArray(r));
   // AIQueries: [ts,sessionId,agentName,query,browseBrandFilter,hitsCount,hitsIds,responseMs,isFollowUp,queryIndex,aiResponse]
   const queries=rows(sheets.AIQueries).map(r=>({
-    ts:r[0]||'',sessionId:r[1]||'',agentName:r[2]||'',q:r[3]||'',query:r[3]||'',brand:r[4]||'all',browseBrandFilter:r[4]||'all',
+    ts:r[0]||'',sessionId:(r[1]||'').trim(),agentName:r[2]||'',q:r[3]||'',query:r[3]||'',brand:r[4]||'all',browseBrandFilter:r[4]||'all',
     hitsCount:Number(r[5])||0,hitsIds:r[6]||'',responseMs:Number(r[7])||0,
     isFollowUp:r[8]==='true'||r[8]===true,queryIndex:Number(r[9])||0,
     aiResponse:r[10]||'',
@@ -1983,8 +1983,8 @@ function renderRecentQueries(data){
   // Group queries by sessionId — each session = one row
   function buildSessions(qs){
     const map=new Map();
-    qs.forEach(q=>{
-      const sid=q.sessionId||('_nosid_'+(q.agentName||''));
+    qs.forEach((q,i)=>{
+      const sid=q.sessionId||('_nosid_'+i); // no sessionId = treat as its own session
       if(!map.has(sid))map.set(sid,[]);
       map.get(sid).push(q);
     });
@@ -2046,9 +2046,7 @@ function renderRecentQueries(data){
             const brand=first.brand||first.browseBrandFilter||'';
             const ts=first.ts?new Date(first.ts).toLocaleString():'—';
             return`<tr data-rq-idx="${i}" style="border-bottom:1px solid var(--border2);cursor:pointer" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
-              <td style="padding:7px 8px;max-width:260px">
-                <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600" title="${esc(qText)}">${esc(qText)||'—'}</div>
-              </td>
+              <td style="padding:7px 8px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(qText)}">${esc(qText)||'—'}</td>
               <td style="padding:7px 8px;color:var(--text2);white-space:nowrap">${esc(agent)}</td>
               <td style="padding:7px 8px">${brandTag(brand)}</td>
               <td style="padding:7px 8px;color:var(--text3)">${turns.length}</td>
