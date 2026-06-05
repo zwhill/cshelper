@@ -2036,7 +2036,7 @@ function renderRecentQueries(data){
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:12px">
           <thead><tr style="border-bottom:1px solid var(--border2)">
-            <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600;min-width:180px">Query</th>
+            <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600;min-width:180px">Query / Response</th>
             <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Agent</th>
             <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Brand</th>
             <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Docs used</th>
@@ -2044,7 +2044,7 @@ function renderRecentQueries(data){
             <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Feedback</th>
             <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Time</th>
           </tr></thead>
-          <tbody>${rows.slice(0,50).map((q,i)=>{
+          <tbody style="display:block;max-height:340px;overflow-y:auto">${rows.slice(0,10).map((q,i)=>{
             const qText=q.query||q.q||'';
             const agent=q.agentName||q.agent||agentName||'—';
             const brand=q.brand||q.browseBrandFilter||'';
@@ -2052,9 +2052,11 @@ function renderRecentQueries(data){
             const ms=q.responseMs??undefined;
             const ts=q.ts?new Date(q.ts).toLocaleString():'—';
             const isFollowUp=q.isFollowUp===true||q.isFollowUp==='true';
-            return`<tr data-rq-idx="${i}" style="border-bottom:1px solid var(--border2);cursor:pointer" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+            const aiSnippet=(q.aiResponse||'').slice(0,120).trim();
+            return`<tr data-rq-idx="${i}" style="border-bottom:1px solid var(--border2);cursor:pointer;display:table;width:100%;table-layout:fixed" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
               <td style="padding:7px 8px;max-width:240px">
-                <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(qText)}">${esc(qText)||'—'}</div>
+                <div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600" title="${esc(qText)}">${esc(qText)||'—'}</div>
+                ${aiSnippet?`<div style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text3);font-size:11px;margin-top:2px" title="${esc(q.aiResponse||'')}">${esc(aiSnippet)}${(q.aiResponse||'').length>120?'…':''}</div>`:''}
                 ${isFollowUp?'<span style="font-size:9px;background:#1a2a1a;color:#4caf50;border:1px solid #2a4a2a;border-radius:3px;padding:1px 5px;margin-top:2px;display:inline-block">follow-up</span>':''}
               </td>
               <td style="padding:7px 8px;color:var(--text2);white-space:nowrap">${esc(agent)}</td>
@@ -2068,7 +2070,7 @@ function renderRecentQueries(data){
         </table>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border2)">
-        <span style="font-size:12px;color:var(--text3)">Showing ${Math.min(rows.length,50)} of ${rows.length}</span>
+        <span style="font-size:12px;color:var(--text3)">Showing ${Math.min(rows.length,10)} of ${rows.length}</span>
         <div style="display:flex;gap:4px">
           <button style="padding:4px 10px;font-size:11px;border:1px solid var(--border2);border-radius:4px;background:transparent;color:var(--text3);cursor:pointer">‹ Prev</button>
           <button style="padding:4px 10px;font-size:11px;border:1px solid var(--border2);border-radius:4px;background:transparent;color:var(--text3);cursor:pointer">Next ›</button>
@@ -2233,12 +2235,12 @@ function renderPainPoints(data){
         <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Time</th>
         <th style="text-align:left;padding:6px 8px;color:var(--text3);font-weight:600">Type</th>
       </tr></thead>
-      <tbody>${rows.slice(0,50).map((r,i)=>{
+      <tbody style="display:block;max-height:280px;overflow-y:auto">${rows.slice(0,10).map((r,i)=>{
         const q=r.query||r.q||'';
         const agent=r.agentName||r.agent||'—';
         const brand=r.brand||r.browseBrandFilter||'all';
         const ts=r.ts?new Date(r.ts).toLocaleString():'—';
-        return`<tr data-pp-idx="${i}" data-pp-type="${type}" style="border-bottom:1px solid var(--border2);cursor:pointer" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
+        return`<tr data-pp-idx="${i}" data-pp-type="${type}" style="border-bottom:1px solid var(--border2);cursor:pointer;display:table;width:100%;table-layout:fixed" onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background=''">
           <td style="padding:7px 8px;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(q)}">${esc(q)||'—'}</td>
           <td style="padding:7px 8px;color:var(--text2)">${esc(agent)}</td>
           <td style="padding:7px 8px">${brandTag(brand)}</td>
